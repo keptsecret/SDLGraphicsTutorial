@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 #include "Sprite.h"
+#include "GLSLProgram.h"
 
 enum class GameState {PLAY, EXIT};
 
@@ -21,8 +22,10 @@ private:
 	int screen_height_;
 	GameState game_state_;
 	Sprite sprite_;
+	GLSLProgram color_program_;
 
 	void initSystems();
+	void initShaders();
 	void gameLoop();
 	void processInput();
 	void drawGame();

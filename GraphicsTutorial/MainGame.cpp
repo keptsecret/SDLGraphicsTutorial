@@ -2,14 +2,7 @@
 
 #include <iostream>
 
-void fatalError(std::string errorString)
-{
-	std::cout << errorString << std::endl;
-	std::cout << "Enter any key to quit...";
-	int tmp;
-	std::cin >> tmp;
-	SDL_Quit();
-}
+#include "Errors.h"
 
 MainGame::MainGame()
 {
@@ -21,7 +14,6 @@ MainGame::MainGame()
 
 MainGame::~MainGame()
 {
-	
 }
 
 void MainGame::run()
@@ -59,6 +51,15 @@ void MainGame::initSystems()
 
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 	glClearColor(0.f, 0.f, 1.0f, 1.0f);
+
+	initShaders();
+}
+
+void MainGame::initShaders()
+{
+	color_program_.compileShaders("./Shaders/color_shading.vert", "./Shaders/color_shading.frag");
+	color_program_.addAttribute("vertexPosition");
+	color_program_.linkShaders();
 }
 
 void MainGame::gameLoop()
@@ -92,7 +93,9 @@ void MainGame::drawGame()
 	glClearDepth(1.);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	color_program_.use();
 	sprite_.draw();
+	color_program_.unuse();
 
 	SDL_GL_SwapWindow(window_);
 }
