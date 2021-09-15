@@ -85,8 +85,18 @@ void GLSLProgram::unuse()
 	}
 }
 
-void GLSLProgram::compileShader(const std::string& shader_path, const GLuint id)
+GLint GLSLProgram::getUniformLocation(const std::string& uniform_name)
 {
+	GLint location = glGetUniformLocation(program_id_, uniform_name.c_str());
+	if (location == static_cast<GLint> (GL_INVALID_INDEX))
+	{
+		fatalError("Uniform " + uniform_name + " not found in shader!");
+	}
+	return location;
+}
+
+void GLSLProgram::compileShader(const std::string& shader_path, const GLuint id)
+{  
 	std::fstream vertex_file(shader_path);
 	if (vertex_file.fail())
 	{

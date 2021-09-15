@@ -4,12 +4,8 @@
 
 #include "Errors.h"
 
-MainGame::MainGame()
+MainGame::MainGame(): window_(nullptr), screen_width_(1024), screen_height_(768), game_state_(GameState::PLAY), time_(0)
 {
-	window_ = nullptr;
-	screen_width_ = 1024;
-	screen_height_ = 768;
-	game_state_ = GameState::PLAY;
 }
 
 MainGame::~MainGame()
@@ -69,6 +65,7 @@ void MainGame::gameLoop()
 	{
 		processInput();
 		drawGame();
+		time_ += 0.001f;
 	}
 }
 
@@ -95,6 +92,10 @@ void MainGame::drawGame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	color_program_.use();
+
+	GLuint timeLocation = color_program_.getUniformLocation("time");
+	glUniform1f(timeLocation, time_);
+
 	sprite_.draw();
 	color_program_.unuse();
 

@@ -14,6 +14,8 @@ public:
 	void use();
 	void unuse();
 
+	GLint getUniformLocation(const std::string& uniform_name);
+
 private:
 	int num_attrib_;
 	GLuint program_id_;

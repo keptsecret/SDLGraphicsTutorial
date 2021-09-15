@@ -59,6 +59,7 @@ void Sprite::init(float x, float y, float width, float height)
 		vertex.color.a = 255;
 	}
 
+	//change some colors
 	vertices[1].color.r = 0;
 	vertices[1].color.g = 255;
 	vertices[1].color.b = 0;
