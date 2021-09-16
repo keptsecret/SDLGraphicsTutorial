@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "Errors.h"
+#include "ImageLoader.h"
 
 MainGame::MainGame(): window_(nullptr), screen_width_(1024), screen_height_(768), game_state_(GameState::PLAY), time_(0)
 {
@@ -17,6 +18,8 @@ void MainGame::run()
 	initSystems();
 
 	sprite_.init(-1.0, -1.0, 2.0, 2.0);
+
+	player_texture_ = ImageLoader::loadPNG("./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
 	gameLoop();
 }
@@ -56,6 +59,7 @@ void MainGame::initShaders()
 	color_program_.compileShaders("./Shaders/color_shading.vert", "./Shaders/color_shading.frag");
 	color_program_.addAttribute("vertexPosition");
 	color_program_.addAttribute("vertexColor");
+	color_program_.addAttribute("vertexUV");
 	color_program_.linkShaders();
 }
 
@@ -92,11 +96,17 @@ void MainGame::drawGame()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	color_program_.use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, player_texture_.id);
+	GLint texture_location = color_program_.getUniformLocation("samplerTex");
+	glUniform1i(texture_location, 0);
 
+	// commented out to avoid code optimization when time is not used in shader code
 	GLuint timeLocation = color_program_.getUniformLocation("time");
 	glUniform1f(timeLocation, time_);
 
 	sprite_.draw();
+	glBindTexture(GL_TEXTURE_2D, 0);
 	color_program_.unuse();
 
 	SDL_GL_SwapWindow(window_);

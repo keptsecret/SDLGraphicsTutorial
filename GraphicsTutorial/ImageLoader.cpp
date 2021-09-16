@@ -36,5 +36,8 @@ GLTexture ImageLoader::loadPNG(std::string file_path)
 	glGenerateMipmap(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, 0);			// unbinds texture
 
+	texture.width = static_cast<int>(width);
+	texture.height = static_cast<int>(height);
+
 	return texture;
 }

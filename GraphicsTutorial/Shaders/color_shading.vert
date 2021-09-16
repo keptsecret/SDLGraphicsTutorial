@@ -2,9 +2,11 @@
 
 in vec2 vertexPosition;
 in vec4 vertexColor;
+in vec2 vertexUV;
 
 out vec2 fragmentPosition;
 out vec4 fragmentColor;
+out vec2 fragmentUV;
 
 void main()
 {
@@ -14,4 +16,6 @@ void main()
 
     fragmentPosition = vertexPosition;
     fragmentColor = vertexColor;
+    // flip image around to correct orientation
+    fragmentUV = vec2(vertexUV.x, 1.0 - vertexUV.y);
 }
