@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL.h>
+#include <vector>
 #include <GL/glew.h>
 
 #include "Sprite.h"
@@ -24,13 +25,18 @@ private:
 	GameState game_state_;
 	Sprite sprite_;
 	GLSLProgram color_program_;
-	GLTexture player_texture_;
+
+	std::vector<Sprite*> sprites_;
 
 	float time_;
+	float fps_;
+	float frame_time_;
+	float max_fps_;
 
 	void initSystems();
 	void initShaders();
 	void gameLoop();
 	void processInput();
 	void drawGame();
+	void calculateFPS();
 };

@@ -5,7 +5,7 @@
 #include "Errors.h"
 #include "ImageLoader.h"
 
-MainGame::MainGame(): window_(nullptr), screen_width_(1024), screen_height_(768), game_state_(GameState::PLAY), time_(0)
+MainGame::MainGame(): window_(nullptr), screen_width_(1024), screen_height_(768), game_state_(GameState::PLAY), time_(0.0f), max_fps_(60.0f)
 {
 }
 
@@ -17,9 +17,16 @@ void MainGame::run()
 {
 	initSystems();
 
-	sprite_.init(-1.0, -1.0, 2.0, 2.0);
+	// Initialize a couple of sprites
+	sprites_.push_back(new Sprite());
+	sprites_.back()->init(-1.0, -1.0, 1.0, 1.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
-	player_texture_ = ImageLoader::loadPNG("./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+	sprites_.push_back(new Sprite());
+	sprites_.back()->init(0.0, -1.0, 1.0, 1.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+
+	// sprite_.init(-1.0, -1.0, 2.0, 2.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+
+	// player_texture_ = ImageLoader::loadPNG("./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
 	gameLoop();
 }
@@ -67,9 +74,29 @@ void MainGame::gameLoop()
 {
 	while (game_state_ != GameState::EXIT)
 	{
+		// for frame time measuring
+		float start_ticks = SDL_GetTicks();
+
 		processInput();
 		drawGame();
 		time_ += 0.001f;
+		calculateFPS();
+
+		// print only every 10 frames
+		static int frame_count = 0;
+		frame_count++;
+		if (frame_count == 10)
+		{
+			std::cout << fps_ << std::endl;
+			frame_count = 0;
+		}
+
+		// limit fps to max fps
+		float frame_ticks = SDL_GetTicks() - start_ticks;
+		if (1000.0f / max_fps_ > frame_ticks)
+		{
+			SDL_Delay(1000.0f / max_fps_ - frame_ticks);
+		}
 	}
 }
 
@@ -84,7 +111,7 @@ void MainGame::processInput()
 			game_state_ = GameState::EXIT;
 			break;
 		case SDL_MOUSEMOTION:
-			std::cout << event.motion.x << " " << event.motion.y << std::endl;
+			// std::cout << event.motion.x << " " << event.motion.y << std::endl;
 			break;
 		}
 	}
@@ -97,7 +124,7 @@ void MainGame::drawGame()
 
 	color_program_.use();
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, player_texture_.id);
+	// glBindTexture(GL_TEXTURE_2D, player_texture_.id);		// redundant now that bind is done through sprite
 	GLint texture_location = color_program_.getUniformLocation("samplerTex");
 	glUniform1i(texture_location, 0);
 
@@ -105,11 +132,56 @@ void MainGame::drawGame()
 	GLuint timeLocation = color_program_.getUniformLocation("time");
 	glUniform1f(timeLocation, time_);
 
-	sprite_.draw();
+	for (size_t i = 0; i < sprites_.size(); i++)
+	{
+		sprites_[i]->draw();
+	}
+	// sprite_.draw();
 	glBindTexture(GL_TEXTURE_2D, 0);
 	color_program_.unuse();
 
 	SDL_GL_SwapWindow(window_);
 }
 
+void MainGame::calculateFPS()
+{
+	static const int NUM_SAMPLES = 10;
+	static float frame_times[NUM_SAMPLES];
+	static int curr_frame = 0;
 
+	static float prev_ticks = SDL_GetTicks();
+	float curr_ticks;
+	curr_ticks = SDL_GetTicks();
+
+	frame_time_ = curr_ticks - prev_ticks;
+	frame_times[curr_frame % NUM_SAMPLES] = frame_time_;
+
+	prev_ticks = curr_ticks;
+
+	curr_frame++;
+	int count;
+	if (curr_frame < NUM_SAMPLES)
+	{
+		count = curr_frame;
+	}
+	else
+	{
+		count = NUM_SAMPLES;
+	}
+
+	float frame_time_avg = 0;
+	for (size_t i = 0; i < count; i++)
+	{
+		frame_time_avg += frame_times[i];
+	}
+	frame_time_avg /= static_cast<float> (count);
+
+	if (frame_time_avg > 0)
+	{
+		fps_ = 1000.0f / frame_time_avg;
+	}
+	else
+	{
+		fps_ = 60.0f;
+	}
+}
