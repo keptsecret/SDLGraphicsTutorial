@@ -35,6 +35,7 @@ void MainGame::initSystems()
 {
 	// Initialize SDL with everything
 	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);			// tell SDL we want a double buffered window to prevent flickering
 
 	window_ = SDL_CreateWindow("Game Engine", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, screen_width_, screen_height_, SDL_WINDOW_OPENGL);
 
@@ -55,8 +56,12 @@ void MainGame::initSystems()
 		fatalError("Could not initialize glew!");
 	}
 
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	// check opengl version
+	std::printf("***    OpenGL version: %s    ***\n", glGetString(GL_VERSION));
+
 	glClearColor(0.f, 0.f, 1.0f, 1.0f);
+
+	SDL_GL_SetSwapInterval(0);		// set vsync on (1), off (0)
 
 	initShaders();
 }
