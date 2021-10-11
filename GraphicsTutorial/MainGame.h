@@ -4,9 +4,10 @@
 #include <vector>
 #include <GL/glew.h>
 
-#include "Sprite.h"
-#include "GLSLProgram.h"
-#include "GLTexture.h"
+#include <SkeletonEngine/GLTexture.h>
+#include <SkeletonEngine/GLSLProgram.h>
+#include <SkeletonEngine/Sprite.h>
+#include <SkeletonEngine/Window.h>
 
 enum class GameState {PLAY, EXIT};
 
@@ -19,14 +20,14 @@ public:
 	void run();
 
 private:
-	SDL_Window* window_;
+	SkeletonEngine::Window window_;
 	int screen_width_;
 	int screen_height_;
 	GameState game_state_;
-	Sprite sprite_;
-	GLSLProgram color_program_;
+	SkeletonEngine::Sprite sprite_;
+	SkeletonEngine::GLSLProgram color_program_;
 
-	std::vector<Sprite*> sprites_;
+	std::vector<SkeletonEngine::Sprite*> sprites_;
 
 	float time_;
 	float fps_;

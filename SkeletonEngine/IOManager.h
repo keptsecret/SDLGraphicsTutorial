@@ -2,9 +2,13 @@
 #include <string>
 #include <vector>
 
-class IOManager
+namespace SkeletonEngine
 {
-public:
-	static bool readFileToBuffer(std::string file_path, std::vector<unsigned char>& buffer);
-};
 
+	class IOManager
+	{
+	public:
+		static bool readFileToBuffer(std::string file_path, std::vector<unsigned char>& buffer);
+	};
+
+}

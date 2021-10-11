@@ -1,10 +1,14 @@
 #pragma once
 
 #include <GL/glew.h>
-
-struct GLTexture
+namespace SkeletonEngine
 {
-	GLuint id;
-	int width;
-	int height;
-};
+
+	struct GLTexture
+	{
+		GLuint id;
+		int width;
+		int height;
+	};
+
+}

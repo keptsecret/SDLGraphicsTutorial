@@ -5,23 +5,27 @@
 
 #include "GLTexture.h"
 
-class Sprite
+namespace SkeletonEngine
 {
-public:
-	Sprite();
-	~Sprite();
 
-	void init(float x, float y, float width, float height, std::string texture_path);
+	class Sprite
+	{
+	public:
+		Sprite();
+		~Sprite();
 
-	void draw();
+		void init(float x, float y, float width, float height, std::string texture_path);
 
-private:
-	float x_;
-	float y_;
-	float width_;
-	float height_;
+		void draw();
 
-	GLuint vbo_id_;
-	GLTexture texture_;
-};
+	private:
+		float x_;
+		float y_;
+		float width_;
+		float height_;
 
+		GLuint vbo_id_;
+		GLTexture texture_;
+	};
+
+}

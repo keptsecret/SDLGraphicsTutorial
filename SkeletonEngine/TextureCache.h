@@ -5,15 +5,19 @@
 
 #include "GLTexture.h"
 
-class TextureCache
+namespace SkeletonEngine
 {
-public:
-	TextureCache();
-	~TextureCache();
 
-	GLTexture getTexture(const std::string& texture_path);
+	class TextureCache
+	{
+	public:
+		TextureCache();
+		~TextureCache();
 
-private:
-	std::map<std::string, GLTexture> texture_map_;
-};
+		GLTexture getTexture(const std::string& texture_path);
 
+	private:
+		std::map<std::string, GLTexture> texture_map_;
+	};
+
+}

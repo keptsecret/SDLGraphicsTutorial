@@ -4,9 +4,13 @@
 
 #include "GLTexture.h"
 
-class ImageLoader
+namespace SkeletonEngine
 {
-public:
-	static GLTexture loadPNG(std::string file_path);
-};
 
+	class ImageLoader
+	{
+	public:
+		static GLTexture loadPNG(std::string file_path);
+	};
+
+}
