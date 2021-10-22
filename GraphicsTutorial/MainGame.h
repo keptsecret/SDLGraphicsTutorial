@@ -8,6 +8,7 @@
 #include <SkeletonEngine/GLSLProgram.h>
 #include <SkeletonEngine/Sprite.h>
 #include <SkeletonEngine/Window.h>
+#include <SkeletonEngine/Camera2D.h>
 
 enum class GameState {PLAY, EXIT};
 
@@ -28,6 +29,7 @@ private:
 	SkeletonEngine::GLSLProgram color_program_;
 
 	std::vector<SkeletonEngine::Sprite*> sprites_;
+	SkeletonEngine::Camera2D camera_;
 
 	float time_;
 	float fps_;

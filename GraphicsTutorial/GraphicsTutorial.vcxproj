@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir);C:\vclib\glew-2.1.0\include;C:\vclib\SDL2-2.0.16\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);C:\vclib\glew-2.1.0\include;C:\vclib\SDL2-2.0.16\include;C:\vclib\glm\glm;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Debug;C:\vclib\glew-2.1.0\lib\Release\Win32;C:\vclib\SDL2-2.0.16\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

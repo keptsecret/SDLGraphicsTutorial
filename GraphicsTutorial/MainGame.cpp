@@ -8,6 +8,7 @@
 
 MainGame::MainGame(): screen_width_(1024), screen_height_(768), game_state_(GameState::PLAY), time_(0.0f), max_fps_(60.0f)
 {
+	camera_.init(screen_width_, screen_height_);
 }
 
 MainGame::~MainGame()
@@ -20,10 +21,10 @@ void MainGame::run()
 
 	// Initialize a couple of sprites
 	sprites_.push_back(new SkeletonEngine::Sprite());
-	sprites_.back()->init(-1.0, -1.0, 1.0, 1.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+	sprites_.back()->init(0.0f, 0.0f, screen_width_ / 2, screen_height_ / 2, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
 	sprites_.push_back(new SkeletonEngine::Sprite());
-	sprites_.back()->init(0.0, -1.0, 1.0, 1.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+	sprites_.back()->init(screen_width_ / 2, -1.0, screen_width_ / 2, screen_height_ / 2, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
 	// sprite_.init(-1.0, -1.0, 2.0, 2.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 
@@ -58,8 +59,11 @@ void MainGame::gameLoop()
 		float start_ticks = SDL_GetTicks();
 
 		processInput();
+		time_ += 0.01f;
+
+		camera_.update();
+
 		drawGame();
-		time_ += 0.001f;
 		calculateFPS();
 
 		// print only every 10 frames
@@ -83,6 +87,9 @@ void MainGame::gameLoop()
 void MainGame::processInput()
 {
 	SDL_Event event;
+	const float CAMERA_SPEED = 20.0f;
+	const float SCALE_SPEED = 0.1f;
+
 	while (SDL_PollEvent(&event))
 	{
 		switch (event.type)
@@ -92,6 +99,29 @@ void MainGame::processInput()
 			break;
 		case SDL_MOUSEMOTION:
 			// std::cout << event.motion.x << " " << event.motion.y << std::endl;
+			break;
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.sym)
+			{
+			case SDLK_w:
+				camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, CAMERA_SPEED));
+				break;
+			case SDLK_s:
+				camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, -CAMERA_SPEED));
+				break;
+			case SDLK_d:
+				camera_.setPosition(camera_.getPosition() + glm::vec2(CAMERA_SPEED, 0.0f));
+				break;
+			case SDLK_a:
+				camera_.setPosition(camera_.getPosition() + glm::vec2(-CAMERA_SPEED, 0.0f));
+				break;
+			case SDLK_q:
+				camera_.setScale(camera_.getScale() + SCALE_SPEED);
+				break;
+			case SDLK_e:
+				camera_.setScale(camera_.getScale() - SCALE_SPEED);
+				break;
+			}
 			break;
 		}
 	}
@@ -109,8 +139,13 @@ void MainGame::drawGame()
 	glUniform1i(texture_location, 0);
 
 	// commented out to avoid code optimization when time is not used in shader code
-	GLuint timeLocation = color_program_.getUniformLocation("time");
-	glUniform1f(timeLocation, time_);
+	GLint time_location = color_program_.getUniformLocation("time");
+	glUniform1f(time_location, time_);
+
+	GLint p_location = color_program_.getUniformLocation("P");
+	glm::mat4 camera_matrix = camera_.getCameraMatrix();
+
+	glUniformMatrix4fv(p_location, 1, GL_FALSE, &(camera_matrix[0][0]));
 
 	for (size_t i = 0; i < sprites_.size(); i++)
 	{
