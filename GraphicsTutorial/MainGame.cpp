@@ -6,6 +6,8 @@
 #include <SkeletonEngine/Errors.h>
 #include <SkeletonEngine/ImageLoader.h>
 
+#include "SkeletonEngine/ResourceManager.h"
+
 MainGame::MainGame(): screen_width_(1024), screen_height_(768), game_state_(GameState::PLAY), time_(0.0f), max_fps_(60.0f)
 {
 	camera_.init(screen_width_, screen_height_);
@@ -19,17 +21,6 @@ void MainGame::run()
 {
 	initSystems();
 
-	// Initialize a couple of sprites
-	sprites_.push_back(new SkeletonEngine::Sprite());
-	sprites_.back()->init(0.0f, 0.0f, screen_width_ / 2, screen_height_ / 2, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
-
-	sprites_.push_back(new SkeletonEngine::Sprite());
-	sprites_.back()->init(screen_width_ / 2, -1.0, screen_width_ / 2, screen_height_ / 2, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
-
-	// sprite_.init(-1.0, -1.0, 2.0, 2.0, "./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
-
-	// player_texture_ = ImageLoader::loadPNG("./Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
-
 	gameLoop();
 }
 
@@ -40,6 +31,8 @@ void MainGame::initSystems()
 	window_.create("Game Engine", screen_width_, screen_height_, 0);
 
 	initShaders();
+
+	sprite_batch_.init();
 }
 
 void MainGame::initShaders()
@@ -147,11 +140,23 @@ void MainGame::drawGame()
 
 	glUniformMatrix4fv(p_location, 1, GL_FALSE, &(camera_matrix[0][0]));
 
-	for (size_t i = 0; i < sprites_.size(); i++)
+	sprite_batch_.begin();
+
+	glm::vec4 pos(0, 0, 50, 50);
+	glm::vec4 uv(0.0f, 0.0f, 1.0f, 1.0f);
+	static SkeletonEngine::GLTexture texture = SkeletonEngine::ResourceManager::getTexture("Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
+	SkeletonEngine::Color color{255, 255, 255, 255};
+
+	// really test efficiency by drawing 2000 sprites each update
+	for (int i = 0; i < 1000; i++)
 	{
-		sprites_[i]->draw();
+		sprite_batch_.draw(pos, uv, texture.id, 0.0f, color);
+		sprite_batch_.draw(pos + glm::vec4(50, 0, 0, 0), uv, texture.id, 0.0f, color);
 	}
-	// sprite_.draw();
+
+	sprite_batch_.end();
+	sprite_batch_.renderBatch();
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 	color_program_.unuse();
 
