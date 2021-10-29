@@ -10,6 +10,8 @@
 #include <SkeletonEngine/Window.h>
 #include <SkeletonEngine/Camera2D.h>
 #include <SkeletonEngine/SpriteBatch.h>
+#include <SkeletonEngine/InputManager.h>
+#include <SkeletonEngine/Timing.h>
 
 enum class GameState {PLAY, EXIT};
 
@@ -32,10 +34,11 @@ private:
 	SkeletonEngine::SpriteBatch sprite_batch_;
 
 	SkeletonEngine::Camera2D camera_;
+	SkeletonEngine::InputManager input_manager_;
+	SkeletonEngine::FpsLimiter fps_limiter_;
 
 	float time_;
 	float fps_;
-	float frame_time_;
 	float max_fps_;
 
 	void initSystems();
@@ -43,5 +46,4 @@ private:
 	void gameLoop();
 	void processInput();
 	void drawGame();
-	void calculateFPS();
 };

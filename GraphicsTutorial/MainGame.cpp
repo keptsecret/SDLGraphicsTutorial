@@ -33,6 +33,7 @@ void MainGame::initSystems()
 	initShaders();
 
 	sprite_batch_.init();
+	fps_limiter_.init(max_fps_);
 }
 
 void MainGame::initShaders()
@@ -49,7 +50,7 @@ void MainGame::gameLoop()
 	while (game_state_ != GameState::EXIT)
 	{
 		// for frame time measuring
-		float start_ticks = SDL_GetTicks();
+		fps_limiter_.begin();
 
 		processInput();
 		time_ += 0.01f;
@@ -57,7 +58,8 @@ void MainGame::gameLoop()
 		camera_.update();
 
 		drawGame();
-		calculateFPS();
+
+		fps_ = fps_limiter_.end();
 
 		// print only every 10 frames
 		static int frame_count = 0;
@@ -67,20 +69,13 @@ void MainGame::gameLoop()
 			std::cout << fps_ << std::endl;
 			frame_count = 0;
 		}
-
-		// limit fps to max fps
-		float frame_ticks = SDL_GetTicks() - start_ticks;
-		if (1000.0f / max_fps_ > frame_ticks)
-		{
-			SDL_Delay(1000.0f / max_fps_ - frame_ticks);
-		}
 	}
 }
 
 void MainGame::processInput()
 {
 	SDL_Event event;
-	const float CAMERA_SPEED = 20.0f;
+	const float CAMERA_SPEED = 5.0f;
 	const float SCALE_SPEED = 0.1f;
 
 	while (SDL_PollEvent(&event))
@@ -94,29 +89,37 @@ void MainGame::processInput()
 			// std::cout << event.motion.x << " " << event.motion.y << std::endl;
 			break;
 		case SDL_KEYDOWN:
-			switch (event.key.keysym.sym)
-			{
-			case SDLK_w:
-				camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, CAMERA_SPEED));
-				break;
-			case SDLK_s:
-				camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, -CAMERA_SPEED));
-				break;
-			case SDLK_d:
-				camera_.setPosition(camera_.getPosition() + glm::vec2(CAMERA_SPEED, 0.0f));
-				break;
-			case SDLK_a:
-				camera_.setPosition(camera_.getPosition() + glm::vec2(-CAMERA_SPEED, 0.0f));
-				break;
-			case SDLK_q:
-				camera_.setScale(camera_.getScale() + SCALE_SPEED);
-				break;
-			case SDLK_e:
-				camera_.setScale(camera_.getScale() - SCALE_SPEED);
-				break;
-			}
+			input_manager_.pressKey(event.key.keysym.sym);
+			break;
+		case SDL_KEYUP:
+			input_manager_.releaseKey(event.key.keysym.sym);
 			break;
 		}
+	}
+
+	if (input_manager_.isKeyPressed(SDLK_w))
+	{
+		camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, CAMERA_SPEED));
+	}
+	if (input_manager_.isKeyPressed(SDLK_s))
+	{
+		camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, -CAMERA_SPEED));
+	}
+	if (input_manager_.isKeyPressed(SDLK_d))
+	{
+		camera_.setPosition(camera_.getPosition() + glm::vec2(CAMERA_SPEED, 0.0f));
+	}
+	if (input_manager_.isKeyPressed(SDLK_a))
+	{
+		camera_.setPosition(camera_.getPosition() + glm::vec2(-CAMERA_SPEED, 0.0f));
+	}
+	if (input_manager_.isKeyPressed(SDLK_q))
+	{
+		camera_.setScale(camera_.getScale() + SCALE_SPEED);
+	}
+	if (input_manager_.isKeyPressed(SDLK_e))
+	{
+		camera_.setScale(camera_.getScale() - SCALE_SPEED);
 	}
 }
 
@@ -147,12 +150,8 @@ void MainGame::drawGame()
 	static SkeletonEngine::GLTexture texture = SkeletonEngine::ResourceManager::getTexture("Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
 	SkeletonEngine::Color color{255, 255, 255, 255};
 
-	// really test efficiency by drawing 2000 sprites each update
-	for (int i = 0; i < 1000; i++)
-	{
-		sprite_batch_.draw(pos, uv, texture.id, 0.0f, color);
-		sprite_batch_.draw(pos + glm::vec4(50, 0, 0, 0), uv, texture.id, 0.0f, color);
-	}
+	sprite_batch_.draw(pos, uv, texture.id, 0.0f, color);
+	sprite_batch_.draw(pos + glm::vec4(50, 0, 0, 0), uv, texture.id, 0.0f, color);
 
 	sprite_batch_.end();
 	sprite_batch_.renderBatch();
@@ -161,47 +160,4 @@ void MainGame::drawGame()
 	color_program_.unuse();
 
 	window_.swapBuffer();
-}
-
-void MainGame::calculateFPS()
-{
-	static const int NUM_SAMPLES = 10;
-	static float frame_times[NUM_SAMPLES];
-	static int curr_frame = 0;
-
-	static float prev_ticks = SDL_GetTicks();
-	float curr_ticks;
-	curr_ticks = SDL_GetTicks();
-
-	frame_time_ = curr_ticks - prev_ticks;
-	frame_times[curr_frame % NUM_SAMPLES] = frame_time_;
-
-	prev_ticks = curr_ticks;
-
-	curr_frame++;
-	int count;
-	if (curr_frame < NUM_SAMPLES)
-	{
-		count = curr_frame;
-	}
-	else
-	{
-		count = NUM_SAMPLES;
-	}
-
-	float frame_time_avg = 0;
-	for (size_t i = 0; i < count; i++)
-	{
-		frame_time_avg += frame_times[i];
-	}
-	frame_time_avg /= static_cast<float> (count);
-
-	if (frame_time_avg > 0)
-	{
-		fps_ = 1000.0f / frame_time_avg;
-	}
-	else
-	{
-		fps_ = 60.0f;
-	}
 }
