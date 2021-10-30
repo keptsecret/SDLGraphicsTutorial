@@ -2,7 +2,7 @@
 
 namespace SkeletonEngine
 {
-	InputManager::InputManager()
+	InputManager::InputManager(): mouse_coords_(0.0f)
 	{
 	}
 
@@ -29,5 +29,11 @@ namespace SkeletonEngine
 		}
 
 		return false;
+	}
+
+	void InputManager::setMouseCoords(float x, float y)
+	{
+		mouse_coords_.x = x;
+		mouse_coords_.y = y;
 	}
 }

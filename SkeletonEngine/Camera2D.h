@@ -14,6 +14,8 @@ namespace SkeletonEngine
 		void init(int screen_width, int screen_height);
 		void update();
 
+		glm::vec2 convertScreenToWorldCoords(glm::vec2 screen_coords);
+
 		void setPosition(const glm::vec2& new_position) { position_ = new_position; need_matrix_update_ = true; }
 		void setScale(float new_scale) { scale_ = new_scale; need_matrix_update_ = true; }
 

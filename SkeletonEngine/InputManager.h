@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <glm.hpp>
 
 namespace SkeletonEngine
 {
@@ -14,8 +15,12 @@ namespace SkeletonEngine
 		void releaseKey(unsigned int key_id);
 		bool isKeyPressed(unsigned int key_id);
 
+		void setMouseCoords(float x, float y);
+		glm::vec2 getMouseCoords() const { return mouse_coords_; }
+
 	private:
 		std::unordered_map<unsigned int, bool> key_map_;
+		glm::vec2 mouse_coords_;
 	};
 }
 

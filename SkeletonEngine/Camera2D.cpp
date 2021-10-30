@@ -39,4 +39,15 @@ namespace SkeletonEngine
 			need_matrix_update_ = false;
 		}
 	}
+
+	glm::vec2 Camera2D::convertScreenToWorldCoords(glm::vec2 screen_coords)
+	{
+		// center the coords to camera
+		screen_coords -= glm::vec2(screen_width_ / 2, screen_height_ / 2);
+		// scale the coords
+		screen_coords /= scale_;
+		// translate with camera position
+		screen_coords += position_;
+		return screen_coords;
+	}
 }
