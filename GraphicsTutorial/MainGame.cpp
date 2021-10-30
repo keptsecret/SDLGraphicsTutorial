@@ -135,8 +135,8 @@ void MainGame::drawGame()
 	glUniform1i(texture_location, 0);
 
 	// commented out to avoid code optimization when time is not used in shader code
-	GLint time_location = color_program_.getUniformLocation("time");
-	glUniform1f(time_location, time_);
+	// GLint time_location = color_program_.getUniformLocation("time");
+	// glUniform1f(time_location, time_);
 
 	GLint p_location = color_program_.getUniformLocation("P");
 	glm::mat4 camera_matrix = camera_.getCameraMatrix();

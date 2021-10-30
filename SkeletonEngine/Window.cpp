@@ -56,6 +56,10 @@ namespace SkeletonEngine
 
 		SDL_GL_SetSwapInterval(0);		// set vsync on (1), off (0)
 
+		// enable alpha blending
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		return 0;
 	}
 
