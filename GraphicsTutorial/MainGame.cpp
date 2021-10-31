@@ -57,6 +57,19 @@ void MainGame::gameLoop()
 
 		camera_.update();
 
+		for (int i = 0; i < bullets_.size();)
+		{
+			if (bullets_[i].update() == true)
+			{
+				bullets_[i] = bullets_.back();
+				bullets_.pop_back();
+			}
+			else
+			{
+				i++;
+			}
+		}
+
 		drawGame();
 
 		fps_ = fps_limiter_.end();
@@ -132,7 +145,12 @@ void MainGame::processInput()
 	{
 		glm::vec2 mouse_coords = input_manager_.getMouseCoords();
 		mouse_coords = camera_.convertScreenToWorldCoords(mouse_coords);
-		std::cout << mouse_coords.x << " " << mouse_coords.y << std::endl;
+		
+		const glm::vec2 player_pos(0.0f);
+		glm::vec2 dir = mouse_coords - player_pos;
+		dir = glm::normalize(dir);
+
+		bullets_.emplace_back(player_pos, dir, 5.0f, 1000);
 	}
 }
 
@@ -164,7 +182,11 @@ void MainGame::drawGame()
 	SkeletonEngine::Color color{255, 255, 255, 255};
 
 	sprite_batch_.draw(pos, uv, texture.id, 0.0f, color);
-	sprite_batch_.draw(pos + glm::vec4(50, 0, 0, 0), uv, texture.id, 0.0f, color);
+
+	for (int i = 0; i < bullets_.size(); i++)
+	{
+		bullets_[i].draw(sprite_batch_);
+	}
 
 	sprite_batch_.end();
 	sprite_batch_.renderBatch();

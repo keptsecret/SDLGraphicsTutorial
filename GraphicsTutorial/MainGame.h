@@ -13,6 +13,8 @@
 #include <SkeletonEngine/InputManager.h>
 #include <SkeletonEngine/Timing.h>
 
+#include "Bullet.h"
+
 enum class GameState {PLAY, EXIT};
 
 class MainGame
@@ -40,6 +42,8 @@ private:
 	float time_;
 	float fps_;
 	float max_fps_;
+
+	std::vector<Bullet> bullets_;
 
 	void initSystems();
 	void initShaders();

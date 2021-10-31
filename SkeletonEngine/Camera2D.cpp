@@ -42,6 +42,8 @@ namespace SkeletonEngine
 
 	glm::vec2 Camera2D::convertScreenToWorldCoords(glm::vec2 screen_coords)
 	{
+		//invert y direction
+		screen_coords.y = screen_height_ - screen_coords.y;
 		// center the coords to camera
 		screen_coords -= glm::vec2(screen_width_ / 2, screen_height_ / 2);
 		// scale the coords
