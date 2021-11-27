@@ -1,6 +1,6 @@
 #include "Timing.h"
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 
 namespace SkeletonEngine
 {

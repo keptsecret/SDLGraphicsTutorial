@@ -1,7 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <glm.hpp>
+#include <glm/glm.hpp>
 
 namespace SkeletonEngine
 {

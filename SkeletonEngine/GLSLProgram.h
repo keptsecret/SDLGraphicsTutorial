@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <GL/glew.h>
+#include <glew/glew.h>
 
 namespace SkeletonEngine
 {

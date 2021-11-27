@@ -1,5 +1,5 @@
-#include <SDL.h>
-#include <GL/glew.h>
+#include <SDL/SDL.h>
+#include <glew/glew.h>
 
 #include "SkeletonEngine.h"
 

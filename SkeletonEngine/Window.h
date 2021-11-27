@@ -1,7 +1,7 @@
 #pragma once
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <string>
-#include <GL/glew.h>
+#include <glew/glew.h>
 
 namespace SkeletonEngine
 {

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SDL.h>
+#include <SDL/SDL.h>
 #include <vector>
-#include <GL/glew.h>
+#include <glew/glew.h>
 
 #include <SkeletonEngine/GLTexture.h>
 #include <SkeletonEngine/GLSLProgram.h>

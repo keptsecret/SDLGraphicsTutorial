@@ -1,7 +1,7 @@
 #pragma once
-#include <glm.hpp>
+#include <glm/glm.hpp>
 #include <vector>
-#include <GL/glew.h>
+#include <glew/glew.h>
 
 #include "Vertex.h"
 
