@@ -5,7 +5,7 @@
 #include <SkeletonEngine/SkeletonEngine.h>
 #include <SkeletonEngine/Timing.h>
 
-MainGame::MainGame(): height_(768), width_(1024), game_state_(GameState::PLAY), fps_(0)
+MainGame::MainGame(): height_(768), width_(1024), game_state_(GameState::PLAY), fps_(0), player_(nullptr)
 {
 }
 
@@ -32,6 +32,7 @@ void MainGame::initSystems()
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 	initShaders();
 
+	sprite_batch_.init();
 	camera_.init(width_, height_);
 }
 
@@ -49,6 +50,21 @@ void MainGame::initLevel()
 	// Level 1
 	levels_.push_back(new Level("Levels/level1.txt"));
 	current_level_ = 0;
+
+	player_ = new Player();
+	player_->init(5.0f, levels_[current_level_]->getPlayerStartPos(), &input_manager_);
+
+	humans_.push_back(player_);
+}
+
+void MainGame::updateAgents()
+{
+	for (Human* h : humans_)
+	{
+		h->update();
+	}
+
+	// TODO: don't forget to update zombies !!
 }
 
 
@@ -62,6 +78,8 @@ void MainGame::gameLoop()
 		fps_limiter.begin();
 
 		processInput();
+		updateAgents();
+		camera_.setPosition(player_->getPosition());
 		camera_.update();
 		drawGame();
 
@@ -118,7 +136,19 @@ void MainGame::drawGame()
 	GLint p_uniform = texture_program_.getUniformLocation("P");
 	glUniformMatrix4fv(p_uniform, 1, GL_FALSE, &projection_matrix[0][0]);
 
+	// draw the level
 	levels_[current_level_]->draw();
+
+	sprite_batch_.begin();
+
+	// draw the humans
+	for (Human* h : humans_)
+	{
+		h->draw(sprite_batch_);
+	}
+
+	sprite_batch_.end();
+	sprite_batch_.renderBatch();
 
 	texture_program_.unuse();
 
