@@ -8,6 +8,8 @@ Human::~Human()
 {
 }
 
-void Human::update()
+void Human::update(const std::vector<std::string>& level_data,
+	std::vector<Human*>& humans,
+	std::vector<Zombie*>& zombies)
 {
 }

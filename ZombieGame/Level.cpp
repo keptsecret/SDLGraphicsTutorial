@@ -66,10 +66,12 @@ Level::Level(const std::string& file_name)
 					white_color);
 				break;
 			case '@':
+				level_data_[y][x] = '.';		// remove to prevent counting as collision part of level
 				player_start_pos_.x = x * TILE_WIDTH;
 				player_start_pos_.y = y * TILE_WIDTH;
 				break;
 			case 'Z':
+				level_data_[y][x] = '.';		// same here
 				zombie_start_pos_.emplace_back(x * TILE_WIDTH, y * TILE_WIDTH);
 				break;
 			case '.':

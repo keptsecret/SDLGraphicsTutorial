@@ -61,7 +61,7 @@ void MainGame::updateAgents()
 {
 	for (Human* h : humans_)
 	{
-		h->update();
+		h->update(levels_[current_level_]->getLevelData(), humans_, zombies_);
 	}
 
 	// TODO: don't forget to update zombies !!

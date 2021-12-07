@@ -10,7 +10,9 @@ public:
 	~Player();
 
 	void init(float speed, glm::vec2 pos, SkeletonEngine::InputManager* input_manager);
-	void update();
+	void update(const std::vector<std::string>& level_data,
+		std::vector<Human*>& humans,
+		std::vector<Zombie*>& zombies);
 
 private:
 	SkeletonEngine::InputManager* input_manager_;
