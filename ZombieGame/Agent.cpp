@@ -13,7 +13,7 @@ Agent::~Agent()
 {
 }
 
-void Agent::collideWithLevel(const std::vector<std::string>& level_data)
+bool Agent::collideWithLevel(const std::vector<std::string>& level_data)
 {
 	std::vector<glm::vec2> collide_tile_position;
 
@@ -23,11 +23,18 @@ void Agent::collideWithLevel(const std::vector<std::string>& level_data)
 	checkTilePosition(level_data, collide_tile_position, position_.x, position_.y + AGENT_WIDTH);
 	checkTilePosition(level_data, collide_tile_position, position_.x + AGENT_WIDTH, position_.y + AGENT_WIDTH);
 
+	if (collide_tile_position.size() == 0)
+	{
+		return false;
+	}
+
 	// do collision
 	for (const glm::vec2 pos : collide_tile_position)
 	{
 		collideWithTile(pos);
 	}
+
+	return true;
 }
 
 void Agent::draw(SkeletonEngine::SpriteBatch& sprite_batch)
@@ -41,11 +48,14 @@ void Agent::draw(SkeletonEngine::SpriteBatch& sprite_batch)
 
 void Agent::checkTilePosition(const std::vector<std::string>& level_data, std::vector<glm::vec2>& collide_tile_pos, float x, float y)
 {
-	glm::vec2 corner_pos1 = glm::vec2(floor(x / float(TILE_WIDTH)),	floor(y / float(TILE_WIDTH)));
+	glm::vec2 corner_pos = glm::vec2(floor(x / float(TILE_WIDTH)),	floor(y / float(TILE_WIDTH)));
 
-	if (level_data[corner_pos1.y][corner_pos1.x] != '.')
+	if (corner_pos.x < 0 || corner_pos.x >= level_data[0].length() ||
+		corner_pos.y < 0 || corner_pos.y >= level_data.size()) return;		// if outside world, ignore and return
+
+	if (level_data[corner_pos.y][corner_pos.x] != '.')
 	{
-		collide_tile_pos.push_back(corner_pos1 * float(TILE_WIDTH) + glm::vec2(float(TILE_WIDTH) / 2.0f));
+		collide_tile_pos.push_back(corner_pos * float(TILE_WIDTH) + glm::vec2(float(TILE_WIDTH) / 2.0f));
 	}
 }
 

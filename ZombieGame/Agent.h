@@ -20,7 +20,7 @@ public:
 						std::vector<Human*>& humans,
 						std::vector<Zombie*>& zombies) = 0;
 
-	void collideWithLevel(const std::vector<std::string>& level_data);
+	bool collideWithLevel(const std::vector<std::string>& level_data);
 
 	void draw(SkeletonEngine::SpriteBatch& sprite_batch);
 

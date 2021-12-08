@@ -1,6 +1,8 @@
 #include "MainGame.h"
 
 #include <iostream>
+#include <random>
+#include <ctime>
 
 #include <SkeletonEngine/SkeletonEngine.h>
 #include <SkeletonEngine/Timing.h>
@@ -55,6 +57,20 @@ void MainGame::initLevel()
 	player_->init(5.0f, levels_[current_level_]->getPlayerStartPos(), &input_manager_);
 
 	humans_.push_back(player_);
+
+	std::mt19937 random_engine;
+	random_engine.seed(time(nullptr));
+	std::uniform_int_distribution<int> rand_X{ 1, levels_[current_level_]->getWidth() - 1 };
+	std::uniform_int_distribution<int> rand_Y{ 1, levels_[current_level_]->getHeight() - 1 };
+
+	const float HUMAN_SPEED = 2.0f;
+
+	for (int i = 0; i < levels_[current_level_]->getNumHumans(); i++)
+	{
+		humans_.push_back(new Human());
+		glm::vec2 pos{ rand_X(random_engine) * TILE_WIDTH, rand_Y(random_engine) * TILE_WIDTH };
+		humans_.back()->init(HUMAN_SPEED, pos);
+	}
 }
 
 void MainGame::updateAgents()
