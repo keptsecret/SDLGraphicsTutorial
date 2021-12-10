@@ -4,7 +4,8 @@
 
 #include <SkeletonEngine/SpriteBatch.h>
 
-const int AGENT_WIDTH = 60;
+const int AGENT_WIDTH = 60.0f;
+const float AGENT_RADIUS = AGENT_WIDTH / 2.0f;
 
 // forward declaration to prevent circular includes
 class Zombie;
@@ -21,6 +22,7 @@ public:
 						std::vector<Zombie*>& zombies) = 0;
 
 	bool collideWithLevel(const std::vector<std::string>& level_data);
+	bool collideWithAgent(Agent* agent);
 
 	void draw(SkeletonEngine::SpriteBatch& sprite_batch);
 

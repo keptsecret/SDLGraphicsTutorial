@@ -6,8 +6,15 @@
 
 #include <SkeletonEngine/SkeletonEngine.h>
 #include <SkeletonEngine/Timing.h>
+#include <SkeletonEngine/Errors.h>
 
-MainGame::MainGame(): height_(768), width_(1024), game_state_(GameState::PLAY), fps_(0), player_(nullptr)
+#include "Zombie.h"
+
+const float HUMAN_SPEED = 2.0f;
+const float ZOMBIE_SPEED = 2.5f;
+const float PLAYER_SPEED = 5.0f;
+
+MainGame::MainGame(): height_(768), width_(1024), player_(nullptr), game_state_(GameState::PLAY), fps_(0)
 {
 }
 
@@ -54,7 +61,7 @@ void MainGame::initLevel()
 	current_level_ = 0;
 
 	player_ = new Player();
-	player_->init(5.0f, levels_[current_level_]->getPlayerStartPos(), &input_manager_);
+	player_->init(PLAYER_SPEED, levels_[current_level_]->getPlayerStartPos(), &input_manager_);
 
 	humans_.push_back(player_);
 
@@ -63,24 +70,77 @@ void MainGame::initLevel()
 	std::uniform_int_distribution<int> rand_X{ 1, levels_[current_level_]->getWidth() - 1 };
 	std::uniform_int_distribution<int> rand_Y{ 1, levels_[current_level_]->getHeight() - 1 };
 
-	const float HUMAN_SPEED = 2.0f;
-
+	// add humans
 	for (int i = 0; i < levels_[current_level_]->getNumHumans(); i++)
 	{
 		humans_.push_back(new Human());
 		glm::vec2 pos{ rand_X(random_engine) * TILE_WIDTH, rand_Y(random_engine) * TILE_WIDTH };
 		humans_.back()->init(HUMAN_SPEED, pos);
 	}
+
+	// add zombie(s)
+	const std::vector<glm::vec2>& zombie_pos = levels_[current_level_]->getZombieStartPos();
+	for (int i = 0; i < zombie_pos.size(); i++)
+	{
+		zombies_.push_back(new Zombie());
+		zombies_.back()->init(ZOMBIE_SPEED, zombie_pos[i]);
+	}
 }
 
 void MainGame::updateAgents()
 {
+	// update humans
 	for (Human* h : humans_)
 	{
 		h->update(levels_[current_level_]->getLevelData(), humans_, zombies_);
 	}
 
-	// TODO: don't forget to update zombies !!
+	// update zombies
+	for (Zombie* z : zombies_)
+	{
+		z->update(levels_[current_level_]->getLevelData(), humans_, zombies_);
+	}
+
+	// Update zombie collisions
+	for (int i = 0; i < zombies_.size(); i++)
+	{
+		// collide with other zombies
+		for (int j = i + 1; j < zombies_.size(); j++)
+		{
+			zombies_[i]->collideWithAgent(zombies_[j]);
+		}
+
+		// collide with humans (player is at human[0])
+		for (int j = 1; j < humans_.size(); j++)
+		{
+			if (zombies_[i]->collideWithAgent(humans_[j]))
+			{
+				// add new zombie
+				zombies_.push_back(new Zombie());
+				zombies_.back()->init(ZOMBIE_SPEED, humans_[j]->getPosition());
+				// delete human
+				delete humans_[j];
+				humans_[j] = humans_.back();
+				humans_.pop_back();
+			}
+		}
+
+		// collide with player
+		if (zombies_[i]->collideWithAgent(player_))
+		{
+			SkeletonEngine::fatalError("YOU LOSE");
+		}
+	}
+
+	// Update human collisions
+	for (int i = 0; i < humans_.size(); i++)
+	{
+		for (int j = i + 1; j < humans_.size(); j++)
+		{
+			humans_[i]->collideWithAgent(humans_[j]);
+		}
+	}
+
 }
 
 
@@ -161,6 +221,12 @@ void MainGame::drawGame()
 	for (Human* h : humans_)
 	{
 		h->draw(sprite_batch_);
+	}
+
+	// draw the zombies
+	for (Zombie* z : zombies_)
+	{
+		z->draw(sprite_batch_);
 	}
 
 	sprite_batch_.end();

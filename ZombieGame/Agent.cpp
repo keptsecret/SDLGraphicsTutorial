@@ -37,6 +37,29 @@ bool Agent::collideWithLevel(const std::vector<std::string>& level_data)
 	return true;
 }
 
+bool Agent::collideWithAgent(Agent* agent)
+{
+	const float MIN_DISTANCE = AGENT_RADIUS * 2;
+
+	// our center
+	glm::vec2 center_posA = position_ + glm::vec2(AGENT_RADIUS);
+	// center of other agent
+	glm::vec2 center_posB = agent->getPosition() + glm::vec2(AGENT_RADIUS);
+
+	glm::vec2 dist_vec = center_posA - center_posB;
+	float distance = glm::length(dist_vec);
+	float collision_depth = MIN_DISTANCE - distance;
+
+	if (collision_depth > 0)
+	{
+		glm::vec2 collision_depth_vec = glm::normalize(dist_vec) * collision_depth;
+		position_ += collision_depth_vec / 2.0f;
+		agent->position_ -= collision_depth_vec / 2.0f;
+		return true;
+	}
+	return false;
+}
+
 void Agent::draw(SkeletonEngine::SpriteBatch& sprite_batch)
 {
 	static int texture_id = SkeletonEngine::ResourceManager::getTexture("Textures/circle.png").id;
@@ -61,7 +84,6 @@ void Agent::checkTilePosition(const std::vector<std::string>& level_data, std::v
 
 void Agent::collideWithTile(glm::vec2 tile_pos)
 {
-	const float AGENT_RADIUS = static_cast<float>(AGENT_WIDTH) / 2.0f;
 	const float TILE_RADIUS = static_cast<float>(TILE_WIDTH) / 2.0f;
 	const float MIN_DISTANCE = AGENT_RADIUS + TILE_RADIUS;
 
