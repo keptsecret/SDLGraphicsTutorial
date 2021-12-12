@@ -12,6 +12,7 @@ Zombie::~Zombie()
 
 void Zombie::init(float speed, glm::vec2 pos)
 {
+    health_ = 150.0f;
     speed_ = speed;
     position_ = pos;
     color_ = SkeletonEngine::Color{ 0, 160, 0, 255 };

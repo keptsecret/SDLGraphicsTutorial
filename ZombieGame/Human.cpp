@@ -17,6 +17,8 @@ void Human::init(float speed, glm::vec2 pos)
     static std::mt19937 random_engine{static_cast<unsigned int>(time(nullptr))};
     static std::uniform_real_distribution<float> rand_dir{ -1.0f, 1.0f };
 
+    health_ = 20.0f;
+
     color_ = SkeletonEngine::Color{ 200, 0, 200, 255 };
 
     speed_ = speed;

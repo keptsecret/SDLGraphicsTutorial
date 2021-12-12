@@ -60,6 +60,12 @@ bool Agent::collideWithAgent(Agent* agent)
 	return false;
 }
 
+bool Agent::applyDamage(float dmg)
+{
+	health_ -= dmg;
+	return health_ <= 0;
+}
+
 void Agent::draw(SkeletonEngine::SpriteBatch& sprite_batch)
 {
 	static int texture_id = SkeletonEngine::ResourceManager::getTexture("Textures/circle.png").id;

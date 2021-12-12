@@ -9,12 +9,13 @@
 #include <SkeletonEngine/Errors.h>
 
 #include "Zombie.h"
+#include "Gun.h"
 
 const float HUMAN_SPEED = 2.0f;
 const float ZOMBIE_SPEED = 2.5f;
 const float PLAYER_SPEED = 5.0f;
 
-MainGame::MainGame(): height_(768), width_(1024), player_(nullptr), game_state_(GameState::PLAY), fps_(0)
+MainGame::MainGame(): height_(768), width_(1024), player_(nullptr), game_state_(GameState::PLAY), fps_(0), num_humans_kiled_(0), num_zombies_killed_(0)
 {
 }
 
@@ -61,7 +62,7 @@ void MainGame::initLevel()
 	current_level_ = 0;
 
 	player_ = new Player();
-	player_->init(PLAYER_SPEED, levels_[current_level_]->getPlayerStartPos(), &input_manager_);
+	player_->init(PLAYER_SPEED, levels_[current_level_]->getPlayerStartPos(), &input_manager_, &camera_, &bullets_);
 
 	humans_.push_back(player_);
 
@@ -85,6 +86,13 @@ void MainGame::initLevel()
 		zombies_.push_back(new Zombie());
 		zombies_.back()->init(ZOMBIE_SPEED, zombie_pos[i]);
 	}
+
+	// set up player's guns
+	const float PI = 3.14159265359f;
+	const float BULLET_SPEED = 20.0f;
+	player_->addGun(new Gun("Magnum", 10, 1, 5.0f / 180.0f * PI, BULLET_SPEED, 30.0f));
+	player_->addGun(new Gun("Shotgun", 30, 12, 20.0f / 180.0f * PI, BULLET_SPEED, 4.0f));
+	player_->addGun(new Gun("MP-5", 2, 1, 10.0f / 180.0f * PI, BULLET_SPEED, 20.0f));
 }
 
 void MainGame::updateAgents()
@@ -143,6 +151,91 @@ void MainGame::updateAgents()
 
 }
 
+void MainGame::updateBullets()
+{
+	// level collision
+	for (int i = 0; i < bullets_.size();)
+	{
+		// if update returns true, then bullet collided with wall
+		if (bullets_[i].update(levels_[current_level_]->getLevelData()))
+		{
+			bullets_[i] = bullets_.back();
+			bullets_.pop_back();
+		}
+		else i++;
+	}
+
+	bool was_bullet_removed;
+
+	// agent collision
+	for (int i = 0; i < bullets_.size(); i++)
+	{
+		was_bullet_removed = false;
+		// loop zombies
+		for (int j = 0; j < zombies_.size();)
+		{
+			if (bullets_[i].collideWithAgent(zombies_[j]))
+			{
+				// damage zombie and kill if no health
+				if (zombies_[j]->applyDamage(bullets_[i].getDamage()))
+				{
+					// remove if zombie died
+					delete zombies_[j];
+					zombies_[j] = zombies_.back();
+					zombies_.pop_back();
+					num_zombies_killed_++;
+				}
+				else j++;
+
+				bullets_[i] = bullets_.back();
+				bullets_.pop_back();
+				was_bullet_removed = true;
+				i--;							// make sure not skipping bullet
+				break;							// since bullet died, no need to loop through any more
+			}
+			else j++;
+		}
+
+		// loop humans
+		if (!was_bullet_removed)
+		{
+			for (int j = 1; j < humans_.size();)
+			{
+				if (bullets_[i].collideWithAgent(humans_[j]))
+				{
+					// damage zombie and kill if no health
+					if (humans_[j]->applyDamage(bullets_[i].getDamage()))
+					{
+						// remove if zombie died
+						delete humans_[j];
+						humans_[j] = humans_.back();
+						humans_.pop_back();
+						num_humans_kiled_++;
+					}
+					else j++;
+
+					bullets_[i] = bullets_.back();
+					bullets_.pop_back();
+					i--;							// make sure not skipping bullet
+					break;							// since bullet died, no need to loop through any more
+				}
+				else j++;
+			}
+		}
+	}
+}
+
+void MainGame::checkVictory()
+{
+	// TODO: support for multiple levels
+	// all zombies dead = win
+	if (zombies_.empty())
+	{
+		std::printf("*** You win! ***\nYou killed %d humans and %d zombies. There are %d/%d humans remaining.",
+			num_humans_kiled_, num_zombies_killed_, humans_.size() - 1, levels_[current_level_]->getNumHumans());
+		SkeletonEngine::fatalError("");
+	}
+}
 
 void MainGame::gameLoop()
 {
@@ -152,9 +245,11 @@ void MainGame::gameLoop()
 	while (game_state_ == GameState::PLAY)
 	{
 		fps_limiter.begin();
+		checkVictory();
 
 		processInput();
 		updateAgents();
+		updateBullets();
 		camera_.setPosition(player_->getPosition());
 		camera_.update();
 		drawGame();
@@ -227,6 +322,12 @@ void MainGame::drawGame()
 	for (Zombie* z : zombies_)
 	{
 		z->draw(sprite_batch_);
+	}
+
+	// draw the bullets
+	for (Bullet b : bullets_)
+	{
+		b.draw(sprite_batch_);
 	}
 
 	sprite_batch_.end();

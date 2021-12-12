@@ -8,6 +8,7 @@
 
 #include "Player.h"
 #include "Level.h"
+#include "Bullet.h"
 
 enum class GameState {PLAY, EXIT};
 
@@ -27,6 +28,8 @@ private:
 	void processInput();
 	void drawGame();
 	void updateAgents();
+	void updateBullets();
+	void checkVictory();
 
 	SkeletonEngine::Window window_;
 	SkeletonEngine::GLSLProgram texture_program_;
@@ -40,9 +43,14 @@ private:
 	std::vector<Level*> levels_;
 	std::vector<Human*> humans_;
 	std::vector<Zombie*> zombies_;
+	std::vector<Bullet> bullets_;
 	Player* player_;
 	GameState game_state_;
 	float fps_;
 	int current_level_;
+
+	// stats
+	int num_humans_kiled_;
+	int num_zombies_killed_;
 };
 

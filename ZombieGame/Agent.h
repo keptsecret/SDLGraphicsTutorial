@@ -23,6 +23,7 @@ public:
 
 	bool collideWithLevel(const std::vector<std::string>& level_data);
 	bool collideWithAgent(Agent* agent);
+	bool applyDamage(float dmg);
 
 	void draw(SkeletonEngine::SpriteBatch& sprite_batch);
 
@@ -35,5 +36,6 @@ protected:
 	glm::vec2 position_;
 	SkeletonEngine::Color color_;
 	float speed_;
+	float health_;
 };
 
