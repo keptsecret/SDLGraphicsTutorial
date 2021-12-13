@@ -27,11 +27,9 @@ namespace SkeletonEngine
 			GLTexture new_texture = ImageLoader::loadPNG(texture_path);
 			texture_map_.insert(std::make_pair(texture_path, new_texture));
 
-			std::cout << "Loaded cached texture!" << std::endl;
 			return new_texture;
 		}
 
-		std::cout << "Loaded texture!" << std::endl;
 		return mit->second;
 	}
 
