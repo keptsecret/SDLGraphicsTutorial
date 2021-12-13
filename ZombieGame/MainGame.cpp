@@ -25,6 +25,16 @@ MainGame::~MainGame()
 	{
 		delete l;
 	}
+
+	for (Human* h : humans_)
+	{
+		delete h;
+	}
+
+	for (Zombie* z : zombies_)
+	{
+		delete z;
+	}
 }
 
 void MainGame::run()
@@ -242,6 +252,9 @@ void MainGame::gameLoop()
 	SkeletonEngine::FpsLimiter fps_limiter;
 	fps_limiter.setMaxFPS(60.0f);
 
+	const float CAMERA_SCALE = 0.5f;
+	camera_.setScale(CAMERA_SCALE);
+
 	while (game_state_ == GameState::PLAY)
 	{
 		fps_limiter.begin();
@@ -255,6 +268,7 @@ void MainGame::gameLoop()
 		drawGame();
 
 		fps_ = fps_limiter.end();
+		std::cout << fps_ << std::endl;
 	}
 }
 
@@ -268,6 +282,7 @@ void MainGame::processInput()
 		{
 		case SDL_QUIT:
 			// Need to exit game here
+			game_state_ = GameState::EXIT;
 			break;
 		case SDL_MOUSEMOTION:
 			input_manager_.setMouseCoords(evnt.motion.x, evnt.motion.y);
