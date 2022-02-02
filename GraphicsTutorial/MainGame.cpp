@@ -116,32 +116,32 @@ void MainGame::processInput()
 		}
 	}
 
-	if (input_manager_.isKeyPressed(SDLK_w))
+	if (input_manager_.isKeyDown(SDLK_w))
 	{
 		camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, CAMERA_SPEED));
 	}
-	if (input_manager_.isKeyPressed(SDLK_s))
+	if (input_manager_.isKeyDown(SDLK_s))
 	{
 		camera_.setPosition(camera_.getPosition() + glm::vec2(0.0f, -CAMERA_SPEED));
 	}
-	if (input_manager_.isKeyPressed(SDLK_d))
+	if (input_manager_.isKeyDown(SDLK_d))
 	{
 		camera_.setPosition(camera_.getPosition() + glm::vec2(CAMERA_SPEED, 0.0f));
 	}
-	if (input_manager_.isKeyPressed(SDLK_a))
+	if (input_manager_.isKeyDown(SDLK_a))
 	{
 		camera_.setPosition(camera_.getPosition() + glm::vec2(-CAMERA_SPEED, 0.0f));
 	}
-	if (input_manager_.isKeyPressed(SDLK_q))
+	if (input_manager_.isKeyDown(SDLK_q))
 	{
 		camera_.setScale(camera_.getScale() + SCALE_SPEED);
 	}
-	if (input_manager_.isKeyPressed(SDLK_e))
+	if (input_manager_.isKeyDown(SDLK_e))
 	{
 		camera_.setScale(camera_.getScale() - SCALE_SPEED);
 	}
 
-	if (input_manager_.isKeyPressed(SDL_BUTTON_LEFT))
+	if (input_manager_.isKeyDown(SDL_BUTTON_LEFT))
 	{
 		glm::vec2 mouse_coords = input_manager_.getMouseCoords();
 		mouse_coords = camera_.convertScreenToWorldCoords(mouse_coords);
@@ -179,7 +179,7 @@ void MainGame::drawGame()
 	glm::vec4 pos(0, 0, 50, 50);
 	glm::vec4 uv(0.0f, 0.0f, 1.0f, 1.0f);
 	static SkeletonEngine::GLTexture texture = SkeletonEngine::ResourceManager::getTexture("Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");
-	SkeletonEngine::Color color{255, 255, 255, 255};
+	SkeletonEngine::ColorRGBA8 color{255, 255, 255, 255};
 
 	sprite_batch_.draw(pos, uv, texture.id, 0.0f, color);
 

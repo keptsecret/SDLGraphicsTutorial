@@ -29,7 +29,7 @@ Level::Level(const std::string& file_name)
 	sprite_batch_.init();
 	sprite_batch_.begin();
 	glm::vec4 uv_rect{ 0.0f, 0.0f, 1.0f, 1.0f };
-	SkeletonEngine::Color white_color{ 255, 255, 255, 255 };
+	SkeletonEngine::ColorRGBA8 white_color{ 255, 255, 255, 255 };
 
 	// render all the tiles
 	for (size_t y = 0; y < level_data_.size(); y++)

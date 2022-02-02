@@ -260,6 +260,7 @@ void MainGame::gameLoop()
 		fps_limiter.begin();
 		checkVictory();
 
+		input_manager_.update();
 		processInput();
 		updateAgents();
 		updateBullets();

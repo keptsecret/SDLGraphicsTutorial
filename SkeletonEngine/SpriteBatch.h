@@ -48,7 +48,7 @@ namespace SkeletonEngine
 		void begin(GlyphSortType sort_type = GlyphSortType::TEXTURE);
 		void end();
 
-		void draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect, GLuint texture, float depth, const Color& color);
+		void draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect, GLuint texture, float depth, const ColorRGBA8& color);
 		void renderBatch();
 
 	private:

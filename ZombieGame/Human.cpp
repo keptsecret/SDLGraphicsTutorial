@@ -19,7 +19,7 @@ void Human::init(float speed, glm::vec2 pos)
 
     health_ = 20.0f;
 
-    color_ = SkeletonEngine::Color{ 200, 0, 200, 255 };
+    color_ = SkeletonEngine::ColorRGBA8{ 200, 0, 200, 255 };
 
     speed_ = speed;
     position_ = pos;

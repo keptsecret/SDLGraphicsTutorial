@@ -35,7 +35,7 @@ namespace SkeletonEngine
 		createRenderBatches();
 	}
 
-	void SpriteBatch::draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect, GLuint texture, float depth, const Color& color)
+	void SpriteBatch::draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect, GLuint texture, float depth, const ColorRGBA8& color)
 	{
 		Glyph* new_glyph = new Glyph;
 		new_glyph->texture = texture;

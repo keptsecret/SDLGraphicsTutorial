@@ -31,7 +31,7 @@ void Bullet::draw(SkeletonEngine::SpriteBatch& sprite_batch)
 {
 	glm::vec4 dest_rect(position_.x + BULLET_RADIUS, position_.y + BULLET_RADIUS, BULLET_RADIUS * 2, BULLET_RADIUS * 2);
 	glm::vec4 uv_rect(0.0f, 0.0f, 1.0f, 1.0f);
-	SkeletonEngine::Color color{ 75, 75, 75, 255 };
+	SkeletonEngine::ColorRGBA8 color{ 75, 75, 75, 255 };
 	sprite_batch.draw(dest_rect, uv_rect, SkeletonEngine::ResourceManager::getTexture("Textures/circle.png").id, 0.0f, color);
 }
 

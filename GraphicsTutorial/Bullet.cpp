@@ -16,7 +16,7 @@ Bullet::~Bullet()
 
 void Bullet::draw(SkeletonEngine::SpriteBatch& sprite_batch)
 {
-	SkeletonEngine::Color color{ 255, 255, 255, 255 };
+	SkeletonEngine::ColorRGBA8 color{ 255, 255, 255, 255 };
 	glm::vec4 uv(0.0f, 0.0f, 1.0f, 1.0f);
 	// TODO: bad practice to use static texture but just as placeholder for now
 	static SkeletonEngine::GLTexture texture = SkeletonEngine::ResourceManager::getTexture("Textures/jimmyJump_pack/PNG/CharacterRight_Standing.png");

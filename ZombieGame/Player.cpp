@@ -31,35 +31,35 @@ void Player::update(const std::vector<std::string>& level_data,
 	std::vector<Zombie*>& zombies)
 {
 	// vertical movement
-	if (input_manager_->isKeyPressed(SDLK_w))
+	if (input_manager_->isKeyDown(SDLK_w))
 	{
 		position_.y += speed_;
 	}
-	else if (input_manager_->isKeyPressed(SDLK_s))
+	else if (input_manager_->isKeyDown(SDLK_s))
 	{
 		position_.y -= speed_;
 	}
 
 	// horizontal movement
-	if (input_manager_->isKeyPressed(SDLK_d))
+	if (input_manager_->isKeyDown(SDLK_d))
 	{
 		position_.x += speed_;
 	}
-	else if (input_manager_->isKeyPressed(SDLK_a))
+	else if (input_manager_->isKeyDown(SDLK_a))
 	{
 		position_.x -= speed_;
 	}
 
 	// selecting guns
-	if (input_manager_->isKeyPressed(SDLK_1) && guns_.size() >= 0)
+	if (input_manager_->isKeyDown(SDLK_1) && guns_.size() >= 0)
 	{
 		curr_gun_idx_ = 0;
 	}
-	else if (input_manager_->isKeyPressed(SDLK_2) && guns_.size() >= 1)
+	else if (input_manager_->isKeyDown(SDLK_2) && guns_.size() >= 1)
 	{
 		curr_gun_idx_ = 1;
 	}
-	else if (input_manager_->isKeyPressed(SDLK_3) && guns_.size() >= 2)
+	else if (input_manager_->isKeyDown(SDLK_3) && guns_.size() >= 2)
 	{
 		curr_gun_idx_ = 2;
 	}
@@ -72,7 +72,7 @@ void Player::update(const std::vector<std::string>& level_data,
 		glm::vec2 center_pos = position_ + glm::vec2(AGENT_RADIUS);
 		glm::vec2 direction = glm::normalize(mouse_coords - center_pos);
 
-		guns_[curr_gun_idx_]->update(input_manager_->isKeyPressed(SDL_BUTTON_LEFT),
+		guns_[curr_gun_idx_]->update(input_manager_->isKeyDown(SDL_BUTTON_LEFT),		// TODO: change back to isKeyDown at some point, test isKeyPressed
 			center_pos,
 			direction,
 			*bullets_);
