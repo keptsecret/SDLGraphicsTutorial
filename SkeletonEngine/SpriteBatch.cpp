@@ -22,42 +22,25 @@ namespace SkeletonEngine
 	{
 		sort_type_ = sort_type;
 		render_batches_.clear();
-		for (Glyph* g : glyphs_)
-		{
-			delete g;
-		}
 		glyphs_.clear();
 	}
 
 	void SpriteBatch::end()
 	{
+		// set up pointers for sorting
+		glyph_ptrs_.resize(glyphs_.size());
+		for (int i = 0; i < glyphs_.size(); i++)
+		{
+			glyph_ptrs_[i] = &glyphs_[i];
+		}
+
 		sortGlyphs();
 		createRenderBatches();
 	}
 
 	void SpriteBatch::draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect, GLuint texture, float depth, const ColorRGBA8& color)
 	{
-		Glyph* new_glyph = new Glyph;
-		new_glyph->texture = texture;
-		new_glyph->depth = depth;
-
-		new_glyph->top_left.color = color;
-		new_glyph->top_left.setPosition(dest_rect.x, dest_rect.y + dest_rect.w);
-		new_glyph->top_left.setUV(uv_rect.x, uv_rect.y + uv_rect.w);
-
-		new_glyph->bottom_left.color = color;
-		new_glyph->bottom_left.setPosition(dest_rect.x, dest_rect.y);
-		new_glyph->bottom_left.setUV(uv_rect.x, uv_rect.y);
-
-		new_glyph->bottom_right.color = color;
-		new_glyph->bottom_right.setPosition(dest_rect.x + dest_rect.z, dest_rect.y);
-		new_glyph->bottom_right.setUV(uv_rect.x + uv_rect.z, uv_rect.y);
-
-		new_glyph->top_right.color = color;
-		new_glyph->top_right.setPosition(dest_rect.x + dest_rect.z, dest_rect.y + dest_rect.w);
-		new_glyph->top_right.setUV(uv_rect.x + uv_rect.z, uv_rect.y + uv_rect.w);
-
-		glyphs_.push_back(new_glyph);
+		glyphs_.emplace_back(dest_rect, uv_rect, texture, depth, color);
 	}
 
 	void SpriteBatch::renderBatch()
@@ -86,32 +69,32 @@ namespace SkeletonEngine
 
 		int curr_vertex = 0;
 		int offset = 0;
-		render_batches_.emplace_back(0, 6, glyphs_[0]->texture);
-		vertices[curr_vertex++] = glyphs_[0]->top_left;
-		vertices[curr_vertex++] = glyphs_[0]->bottom_left;
-		vertices[curr_vertex++] = glyphs_[0]->bottom_right;
-		vertices[curr_vertex++] = glyphs_[0]->bottom_right;
-		vertices[curr_vertex++] = glyphs_[0]->top_right;
-		vertices[curr_vertex++] = glyphs_[0]->top_left;
+		render_batches_.emplace_back(0, 6, glyph_ptrs_[0]->texture);
+		vertices[curr_vertex++] = glyph_ptrs_[0]->top_left;
+		vertices[curr_vertex++] = glyph_ptrs_[0]->bottom_left;
+		vertices[curr_vertex++] = glyph_ptrs_[0]->bottom_right;
+		vertices[curr_vertex++] = glyph_ptrs_[0]->bottom_right;
+		vertices[curr_vertex++] = glyph_ptrs_[0]->top_right;
+		vertices[curr_vertex++] = glyph_ptrs_[0]->top_left;
 		offset += 6;
 
-		for (int curr_glyph = 1; curr_glyph < glyphs_.size(); curr_glyph++)
+		for (int curr_glyph = 1; curr_glyph < glyph_ptrs_.size(); curr_glyph++)
 		{
-			if (glyphs_[curr_glyph]->texture != glyphs_[curr_glyph - 1]->texture)
+			if (glyph_ptrs_[curr_glyph]->texture != glyph_ptrs_[curr_glyph - 1]->texture)
 			{
-				render_batches_.emplace_back(offset, 6, glyphs_[curr_glyph]->texture);
+				render_batches_.emplace_back(offset, 6, glyph_ptrs_[curr_glyph]->texture);
 			}
 			else
 			{
 				render_batches_.back().num_vertices += 6;
 			}
 			
-			vertices[curr_vertex++] = glyphs_[curr_glyph]->top_left;
-			vertices[curr_vertex++] = glyphs_[curr_glyph]->bottom_left;
-			vertices[curr_vertex++] = glyphs_[curr_glyph]->bottom_right;
-			vertices[curr_vertex++] = glyphs_[curr_glyph]->bottom_right;
-			vertices[curr_vertex++] = glyphs_[curr_glyph]->top_right;
-			vertices[curr_vertex++] = glyphs_[curr_glyph]->top_left;
+			vertices[curr_vertex++] = glyph_ptrs_[curr_glyph]->top_left;
+			vertices[curr_vertex++] = glyph_ptrs_[curr_glyph]->bottom_left;
+			vertices[curr_vertex++] = glyph_ptrs_[curr_glyph]->bottom_right;
+			vertices[curr_vertex++] = glyph_ptrs_[curr_glyph]->bottom_right;
+			vertices[curr_vertex++] = glyph_ptrs_[curr_glyph]->top_right;
+			vertices[curr_vertex++] = glyph_ptrs_[curr_glyph]->top_left;
 			offset += 6;
 		}
 
@@ -156,13 +139,13 @@ namespace SkeletonEngine
 		switch (sort_type_)
 		{
 		case GlyphSortType::BACK_TO_FRONT:
-			std::stable_sort(glyphs_.begin(), glyphs_.end(), compareBackToFront);
+			std::stable_sort(glyph_ptrs_.begin(), glyph_ptrs_.end(), compareBackToFront);
 			break;
 		case GlyphSortType::FRONT_TO_BACK:
-			std::stable_sort(glyphs_.begin(), glyphs_.end(), compareFrontToBack);
+			std::stable_sort(glyph_ptrs_.begin(), glyph_ptrs_.end(), compareFrontToBack);
 			break;
 		case GlyphSortType::TEXTURE:
-			std::stable_sort(glyphs_.begin(), glyphs_.end(), compareTexture);
+			std::stable_sort(glyph_ptrs_.begin(), glyph_ptrs_.end(), compareTexture);
 			break;
 		}
 	}

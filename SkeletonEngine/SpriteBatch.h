@@ -16,8 +16,30 @@ namespace SkeletonEngine
 		TEXTURE
 	};
 
-	struct Glyph
+	class Glyph
 	{
+	public:
+		Glyph() {}
+		Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect, GLuint Texture, float Depth, const ColorRGBA8& color) :
+			texture(Texture), depth(Depth)
+		{
+			top_left.color = color;
+			top_left.setPosition(dest_rect.x, dest_rect.y + dest_rect.w);
+			top_left.setUV(uv_rect.x, uv_rect.y + uv_rect.w);
+
+			bottom_left.color = color;
+			bottom_left.setPosition(dest_rect.x, dest_rect.y);
+			bottom_left.setUV(uv_rect.x, uv_rect.y);
+
+			bottom_right.color = color;
+			bottom_right.setPosition(dest_rect.x + dest_rect.z, dest_rect.y);
+			bottom_right.setUV(uv_rect.x + uv_rect.z, uv_rect.y);
+
+			top_right.color = color;
+			top_right.setPosition(dest_rect.x + dest_rect.z, dest_rect.y + dest_rect.w);
+			top_right.setUV(uv_rect.x + uv_rect.z, uv_rect.y + uv_rect.w);
+		}
+
 		GLuint texture;
 		float depth;
 
@@ -55,7 +77,8 @@ namespace SkeletonEngine
 		GLuint vbo_;
 		GLuint vao_;
 
-		std::vector<Glyph*> glyphs_;
+		std::vector<Glyph*> glyph_ptrs_;			// for sorting
+		std::vector<Glyph> glyphs_;					// actual glyphs
 		GlyphSortType sort_type_;
 		std::vector<RenderBatch> render_batches_;
 
