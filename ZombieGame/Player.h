@@ -17,7 +17,8 @@ public:
 	void init(float speed, glm::vec2 pos, SkeletonEngine::InputManager* input_manager, SkeletonEngine::Camera2D* camera, std::vector<Bullet>* bullets);
 	void update(const std::vector<std::string>& level_data,
 		std::vector<Human*>& humans,
-		std::vector<Zombie*>& zombies);
+		std::vector<Zombie*>& zombies,
+		float delta_time);
 
 	void addGun(Gun* gun);
 

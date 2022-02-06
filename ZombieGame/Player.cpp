@@ -28,26 +28,27 @@ void Player::init(float speed, glm::vec2 pos, SkeletonEngine::InputManager* inpu
 
 void Player::update(const std::vector<std::string>& level_data,
 	std::vector<Human*>& humans,
-	std::vector<Zombie*>& zombies)
+	std::vector<Zombie*>& zombies,
+	float delta_time)
 {
 	// vertical movement
 	if (input_manager_->isKeyDown(SDLK_w))
 	{
-		position_.y += speed_;
+		position_.y += speed_ * delta_time;
 	}
 	else if (input_manager_->isKeyDown(SDLK_s))
 	{
-		position_.y -= speed_;
+		position_.y -= speed_ * delta_time;
 	}
 
 	// horizontal movement
 	if (input_manager_->isKeyDown(SDLK_d))
 	{
-		position_.x += speed_;
+		position_.x += speed_ * delta_time;
 	}
 	else if (input_manager_->isKeyDown(SDLK_a))
 	{
-		position_.x -= speed_;
+		position_.x -= speed_ * delta_time;
 	}
 
 	// selecting guns
@@ -75,7 +76,8 @@ void Player::update(const std::vector<std::string>& level_data,
 		guns_[curr_gun_idx_]->update(input_manager_->isKeyDown(SDL_BUTTON_LEFT),		// TODO: change back to isKeyDown at some point, test isKeyPressed
 			center_pos,
 			direction,
-			*bullets_);
+			*bullets_,
+			delta_time);
 	}
 
 	collideWithLevel(level_data);

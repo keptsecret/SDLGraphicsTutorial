@@ -27,8 +27,8 @@ private:
 	void gameLoop();
 	void processInput();
 	void drawGame();
-	void updateAgents();
-	void updateBullets();
+	void updateAgents(float delta_time);
+	void updateBullets(float delta_time);
 	void checkVictory();
 
 	SkeletonEngine::Window window_;

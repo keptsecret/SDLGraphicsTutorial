@@ -19,7 +19,7 @@ public:
 	~Bullet();
 
 	// when update returns true, delete bullet
-	bool update(const std::vector<std::string>& level_data);
+	bool update(const std::vector<std::string>& level_data, float delta_time);
 	void draw(SkeletonEngine::SpriteBatch& sprite_batch);
 
 	bool collideWithAgent(Agent* agent);

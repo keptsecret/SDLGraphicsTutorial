@@ -105,18 +105,18 @@ void MainGame::initLevel()
 	player_->addGun(new Gun("MP-5", 2, 1, 10.0f / 180.0f * PI, BULLET_SPEED, 20.0f));
 }
 
-void MainGame::updateAgents()
+void MainGame::updateAgents(float delta_time)
 {
-	// update humans
+	// update humans (including player)
 	for (Human* h : humans_)
 	{
-		h->update(levels_[current_level_]->getLevelData(), humans_, zombies_);
+		h->update(levels_[current_level_]->getLevelData(), humans_, zombies_, delta_time);
 	}
 
 	// update zombies
 	for (Zombie* z : zombies_)
 	{
-		z->update(levels_[current_level_]->getLevelData(), humans_, zombies_);
+		z->update(levels_[current_level_]->getLevelData(), humans_, zombies_, delta_time);
 	}
 
 	// Update zombie collisions
@@ -161,13 +161,13 @@ void MainGame::updateAgents()
 
 }
 
-void MainGame::updateBullets()
+void MainGame::updateBullets(float delta_time)
 {
 	// level collision
 	for (int i = 0; i < bullets_.size();)
 	{
 		// if update returns true, then bullet collided with wall
-		if (bullets_[i].update(levels_[current_level_]->getLevelData()))
+		if (bullets_[i].update(levels_[current_level_]->getLevelData(), delta_time))
 		{
 			bullets_[i] = bullets_.back();
 			bullets_.pop_back();
@@ -249,21 +249,44 @@ void MainGame::checkVictory()
 
 void MainGame::gameLoop()
 {
+	const float DESIRED_FPS = 60.0f;
+	const int MAX_PHYSICS_STEPS = 6;
+
 	SkeletonEngine::FpsLimiter fps_limiter;
-	fps_limiter.setMaxFPS(60.0f);
+	fps_limiter.setMaxFPS(DESIRED_FPS);
 
 	const float CAMERA_SCALE = 0.5f;
 	camera_.setScale(CAMERA_SCALE);
 
+	const float MS_PER_SEC = 1000.0f;
+	const float DESIRED_FRAMETIME = MS_PER_SEC / DESIRED_FPS;
+	const float MAX_DELTA_TIME = 1.0f;
+
+	float prev_ticks = SDL_GetTicks();
+
 	while (game_state_ == GameState::PLAY)
 	{
 		fps_limiter.begin();
+		float new_ticks = SDL_GetTicks();
+		float frame_time = new_ticks - prev_ticks;
+		prev_ticks = new_ticks;
+		float total_delta_time = frame_time / DESIRED_FRAMETIME;
+
 		checkVictory();
 
 		input_manager_.update();
 		processInput();
-		updateAgents();
-		updateBullets();
+
+		int i = 0;
+		while(total_delta_time > 0.0f && i < MAX_PHYSICS_STEPS)
+		{
+			float delta_time = std::min(total_delta_time, MAX_DELTA_TIME);
+			updateAgents(delta_time);
+			updateBullets(delta_time);
+			total_delta_time -= delta_time;
+			i++;
+		}
+		
 		camera_.setPosition(player_->getPosition());
 		camera_.update();
 		drawGame();

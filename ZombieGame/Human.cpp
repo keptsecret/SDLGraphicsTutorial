@@ -31,7 +31,8 @@ void Human::init(float speed, glm::vec2 pos)
 
 void Human::update(const std::vector<std::string>& level_data,
                    std::vector<Human*>& humans,
-                   std::vector<Zombie*>& zombies)
+                   std::vector<Zombie*>& zombies,
+                   float delta_time)
 {
     const float PI = 3.14159265359f;
     static std::mt19937 random_engine{ static_cast<unsigned int>(time(nullptr)) };

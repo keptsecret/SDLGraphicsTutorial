@@ -19,7 +19,8 @@ public:
 
 	virtual void update(const std::vector<std::string>& level_data,
 						std::vector<Human*>& humans,
-						std::vector<Zombie*>& zombies) = 0;
+						std::vector<Zombie*>& zombies,
+						float delta_time) = 0;
 
 	bool collideWithLevel(const std::vector<std::string>& level_data);
 	bool collideWithAgent(Agent* agent);
