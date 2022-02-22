@@ -1,4 +1,4 @@
-# SDLGraphicsTutorial
+# Simple Skeleton Engine
 
 Learning more about OpenGL and SDL, and making a game engine in the process (looks like it'll be 2D for now)
 
