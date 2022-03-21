@@ -16,6 +16,8 @@ namespace SkeletonEngine
 
 		glm::vec2 convertScreenToWorldCoords(glm::vec2 screen_coords);
 
+		bool isboxInView(const glm::vec2& position, const glm::vec2& dimensions);
+
 		void setPosition(const glm::vec2& new_position) { position_ = new_position; need_matrix_update_ = true; }
 		void setScale(float new_scale) { scale_ = new_scale; need_matrix_update_ = true; }
 

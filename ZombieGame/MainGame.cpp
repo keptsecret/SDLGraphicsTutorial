@@ -351,16 +351,24 @@ void MainGame::drawGame()
 
 	sprite_batch_.begin();
 
+	const glm::vec2 agent_dim(AGENT_RADIUS * 2.0f);
+
 	// draw the humans
 	for (Human* h : humans_)
 	{
-		h->draw(sprite_batch_);
+		if (camera_.isboxInView(h->getPosition(), agent_dim))
+		{
+			h->draw(sprite_batch_);
+		}
 	}
 
 	// draw the zombies
 	for (Zombie* z : zombies_)
 	{
-		z->draw(sprite_batch_);
+		if (camera_.isboxInView(z->getPosition(), agent_dim))
+		{
+			z->draw(sprite_batch_);
+		}
 	}
 
 	// draw the bullets

@@ -52,4 +52,32 @@ namespace SkeletonEngine
 		screen_coords += position_;
 		return screen_coords;
 	}
+
+	bool Camera2D::isboxInView(const glm::vec2& position, const glm::vec2& dimensions)
+	{
+		/*
+		 * TODO: Should do spatial partitioning at some point
+		 */
+
+		glm::vec2 scaled_screen_dim = glm::vec2(screen_width_, screen_height_) / scale_;
+
+		const float MIN_DISTANCE_X = dimensions.x /2.0f + scaled_screen_dim.x / 2.0f;
+		const float MIN_DISTANCE_Y = dimensions.y / 2.0f + scaled_screen_dim.y / 2.0f;
+
+		// center position of params
+		glm::vec2 player_center_pos = position + dimensions / 2.0f;
+		// center position of camera
+		glm::vec2 dist_vec = player_center_pos - position_;					// how far input to camera
+
+		float xdepth = MIN_DISTANCE_X - abs(dist_vec.x);
+		float ydepth = MIN_DISTANCE_Y - abs(dist_vec.y);
+
+		// if either depths are >0, there is collision
+		if (xdepth > 0 && ydepth > 0)
+		{
+			// there was a collision
+			return true;
+		}
+		return false;
+	}
 }
