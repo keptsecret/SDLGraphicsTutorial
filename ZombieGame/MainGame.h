@@ -5,6 +5,7 @@
 #include <SkeletonEngine/Camera2D.h>
 #include <SkeletonEngine/InputManager.h>
 #include <SkeletonEngine/SpriteBatch.h>
+#include <SkeletonEngine/SpriteFont.h>
 
 #include "Player.h"
 #include "Level.h"
@@ -27,6 +28,7 @@ private:
 	void gameLoop();
 	void processInput();
 	void drawGame();
+	void drawHud();
 	void updateAgents(float delta_time);
 	void updateBullets(float delta_time);
 	void checkVictory();
@@ -36,6 +38,8 @@ private:
 	SkeletonEngine::InputManager input_manager_;
 	SkeletonEngine::Camera2D camera_;
 	SkeletonEngine::SpriteBatch sprite_batch_; ///< for drawing all agents
+	SkeletonEngine::SpriteBatch hud_sprite_batch_;
+	SkeletonEngine::SpriteFont* sprite_font_;
 
 	int height_;
 	int width_;

@@ -53,6 +53,11 @@ void MainGame::initSystems()
 	initShaders();
 
 	sprite_batch_.init();
+	hud_sprite_batch_.init();
+
+	// initialize sprite font, has to be after SDL and OpenGL
+	sprite_font_ = new SkeletonEngine::SpriteFont("Fonts/KGHAPPYShadows.ttf", 32);
+
 	camera_.init(width_, height_);
 }
 
@@ -380,8 +385,28 @@ void MainGame::drawGame()
 	sprite_batch_.end();
 	sprite_batch_.renderBatch();
 
+	drawHud();
+
 	texture_program_.unuse();
 
 	// swap buffer to draw to game
 	window_.swapBuffer();
+}
+
+void MainGame::drawHud()
+{
+	/*
+	 * TODO: fonts are kind of broken, needs revisiting
+	 */
+	char buf[256];
+
+	hud_sprite_batch_.begin();
+
+	sprintf_s(buf, "No. of Humans Left: %d", humans_.size());
+
+	sprite_font_->draw(hud_sprite_batch_, buf, glm::vec2(300, 300),
+		glm::vec2(4.0f), 0.0f, SkeletonEngine::ColorRGBA8(255, 255, 255, 255));
+
+	hud_sprite_batch_.end();
+	hud_sprite_batch_.renderBatch();
 }
