@@ -41,12 +41,17 @@ void MainGame::run()
 {
 	initSystems();
 	initLevel();
+
+	SkeletonEngine::Music music = audio_engine_.loadMusic("Sounds/XYZ.ogg");
+	music.play();
+
 	gameLoop();
 }
 
 void MainGame::initSystems()
 {
 	SkeletonEngine::init();
+	audio_engine_.init();
 
 	window_.create("Zombie Game", width_, height_, 0);
 	glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
@@ -56,7 +61,7 @@ void MainGame::initSystems()
 	hud_sprite_batch_.init();
 
 	// initialize sprite font, has to be after SDL and OpenGL
-	sprite_font_ = new SkeletonEngine::SpriteFont("Fonts/KGHAPPYShadows.ttf", 32);
+	sprite_font_ = new SkeletonEngine::SpriteFont("Fonts/chintzy.ttf", 32);
 
 	camera_.init(width_, height_);
 }
@@ -105,9 +110,9 @@ void MainGame::initLevel()
 	// set up player's guns
 	const float PI = 3.14159265359f;
 	const float BULLET_SPEED = 20.0f;
-	player_->addGun(new Gun("Magnum", 10, 1, 5.0f / 180.0f * PI, BULLET_SPEED, 30.0f));
-	player_->addGun(new Gun("Shotgun", 30, 12, 20.0f / 180.0f * PI, BULLET_SPEED, 4.0f));
-	player_->addGun(new Gun("MP-5", 2, 1, 10.0f / 180.0f * PI, BULLET_SPEED, 20.0f));
+	player_->addGun(new Gun("Magnum", 10, 1, 5.0f / 180.0f * PI, BULLET_SPEED, 30.0f, audio_engine_.loadSoundEffect("Sounds/shots/pistol.wav")));
+	player_->addGun(new Gun("Shotgun", 30, 12, 20.0f / 180.0f * PI, BULLET_SPEED, 4.0f, audio_engine_.loadSoundEffect("Sounds/shots/shotgun.wav")));
+	player_->addGun(new Gun("MP-5", 2, 1, 10.0f / 180.0f * PI, BULLET_SPEED, 20.0f, audio_engine_.loadSoundEffect("Sounds/shots/cg1.wav")));
 }
 
 void MainGame::updateAgents(float delta_time)

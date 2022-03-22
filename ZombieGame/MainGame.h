@@ -6,6 +6,7 @@
 #include <SkeletonEngine/InputManager.h>
 #include <SkeletonEngine/SpriteBatch.h>
 #include <SkeletonEngine/SpriteFont.h>
+#include <SkeletonEngine/AudioEngine.h>
 
 #include "Player.h"
 #include "Level.h"
@@ -40,6 +41,7 @@ private:
 	SkeletonEngine::SpriteBatch sprite_batch_; ///< for drawing all agents
 	SkeletonEngine::SpriteBatch hud_sprite_batch_;
 	SkeletonEngine::SpriteFont* sprite_font_;
+	SkeletonEngine::AudioEngine audio_engine_;
 
 	int height_;
 	int width_;
