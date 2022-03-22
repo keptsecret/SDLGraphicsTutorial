@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "Errors.h"
+#include "SkellyErrors.h"
 
 namespace SkeletonEngine
 {

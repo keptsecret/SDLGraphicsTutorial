@@ -1,4 +1,4 @@
-#include "Errors.h"
+#include "SkellyErrors.h"
 
 #include <cstdlib>
 #include <iostream>

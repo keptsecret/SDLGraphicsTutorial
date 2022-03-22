@@ -6,7 +6,7 @@
 
 #include <SkeletonEngine/SkeletonEngine.h>
 #include <SkeletonEngine/Timing.h>
-#include <SkeletonEngine/Errors.h>
+#include <SkeletonEngine/SkellyErrors.h>
 
 #include "Zombie.h"
 #include "Gun.h"

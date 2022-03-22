@@ -1,6 +1,6 @@
 #include "ImageLoader.h"
 
-#include "Errors.h"
+#include "SkellyErrors.h"
 #include "IOManager.h"
 #include "picoPNG.h"
 

@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <SkeletonEngine/Errors.h>
+#include <SkeletonEngine/SkellyErrors.h>
 
 #include "SkeletonEngine/ResourceManager.h"
 

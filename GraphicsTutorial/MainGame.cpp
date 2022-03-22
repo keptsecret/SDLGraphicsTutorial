@@ -3,7 +3,7 @@
 #include <iostream>
 
 #include <SkeletonEngine/SkeletonEngine.h>
-#include <SkeletonEngine/Errors.h>
+#include <SkeletonEngine/SkellyErrors.h>
 #include <SkeletonEngine/ImageLoader.h>
 
 #include "SkeletonEngine/ResourceManager.h"
