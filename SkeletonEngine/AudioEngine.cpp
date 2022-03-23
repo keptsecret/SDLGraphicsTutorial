@@ -47,6 +47,11 @@ namespace SkeletonEngine
 
 	void AudioEngine::init()
 	{
+		if (is_initialized_)
+		{
+			fatalError("Tried to initialize AudioEngine twice");
+		}
+
 		if (Mix_Init(MIX_INIT_MP3 | MIX_INIT_OGG) == -1)
 		{
 			fatalError("Mix_Init error: " + std::string(Mix_GetError()));
@@ -65,6 +70,21 @@ namespace SkeletonEngine
 		if (is_initialized_)
 		{
 			is_initialized_ = false;
+
+			for (auto& it : effect_map_)
+			{
+				Mix_FreeChunk(it.second);
+			}
+
+			for (auto& it : music_map_)
+			{
+				Mix_FreeMusic(it.second);
+			}
+
+			effect_map_.clear();
+			music_map_.clear();
+
+			Mix_CloseAudio();
 			Mix_Quit();
 		}
 	}
