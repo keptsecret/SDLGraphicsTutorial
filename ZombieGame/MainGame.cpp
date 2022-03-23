@@ -3,10 +3,13 @@
 #include <iostream>
 #include <random>
 #include <ctime>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include <SkeletonEngine/SkeletonEngine.h>
 #include <SkeletonEngine/Timing.h>
 #include <SkeletonEngine/SkellyErrors.h>
+#include <SkeletonEngine/ResourceManager.h>
+
 
 #include "Zombie.h"
 #include "Gun.h"
@@ -64,6 +67,10 @@ void MainGame::initSystems()
 	sprite_font_ = new SkeletonEngine::SpriteFont("Fonts/chintzy.ttf", 32);
 
 	camera_.init(width_, height_);
+
+	blood_particle_batch_ = new SkeletonEngine::ParticleBatch2D();
+	blood_particle_batch_->init(1000, 0.05f, SkeletonEngine::ResourceManager::getTexture("Textures/particle.png"));
+	particle_engine_.addParticleBatch(blood_particle_batch_);
 }
 
 void MainGame::initShaders()
@@ -196,6 +203,9 @@ void MainGame::updateBullets(float delta_time)
 		{
 			if (bullets_[i].collideWithAgent(zombies_[j]))
 			{
+				// add blood
+				addBlood(bullets_[i].getPosition(), 5);
+
 				// damage zombie and kill if no health
 				if (zombies_[j]->applyDamage(bullets_[i].getDamage()))
 				{
@@ -223,6 +233,8 @@ void MainGame::updateBullets(float delta_time)
 			{
 				if (bullets_[i].collideWithAgent(humans_[j]))
 				{
+					addBlood(bullets_[i].getPosition(), 5);
+
 					// damage zombie and kill if no health
 					if (humans_[j]->applyDamage(bullets_[i].getDamage()))
 					{
@@ -254,6 +266,22 @@ void MainGame::checkVictory()
 		std::printf("*** You win! ***\nYou killed %d humans and %d zombies. There are %d/%d humans remaining.",
 			num_humans_kiled_, num_zombies_killed_, humans_.size() - 1, levels_[current_level_]->getNumHumans());
 		SkeletonEngine::fatalError("");
+	}
+}
+
+void MainGame::addBlood(const glm::vec2& position, int num_particles)
+{
+	const float PI = 3.14159265359f;
+	static std::mt19937 rand_engine(time(nullptr));
+	static std::uniform_real_distribution<float> rand_angle(0.0f, 2.0f * PI);
+
+	// randomize velocity
+	glm::vec2 vel(1.0f, 0.0f);
+	SkeletonEngine::ColorRGBA8 col(255, 0, 0, 255);
+
+	for (int i = 0; i < num_particles; i++)
+	{
+		blood_particle_batch_->addParticle(position, glm::rotate(vel, rand_angle(rand_engine)), col, 50.0f);
 	}
 }
 
@@ -293,10 +321,11 @@ void MainGame::gameLoop()
 			float delta_time = std::min(total_delta_time, MAX_DELTA_TIME);
 			updateAgents(delta_time);
 			updateBullets(delta_time);
+			particle_engine_.update(delta_time);
 			total_delta_time -= delta_time;
 			i++;
 		}
-		
+
 		camera_.setPosition(player_->getPosition());
 		camera_.update();
 		drawGame();
@@ -389,6 +418,8 @@ void MainGame::drawGame()
 
 	sprite_batch_.end();
 	sprite_batch_.renderBatch();
+
+	particle_engine_.draw(&sprite_batch_);
 
 	drawHud();
 

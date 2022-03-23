@@ -7,6 +7,8 @@
 #include <SkeletonEngine/SpriteBatch.h>
 #include <SkeletonEngine/SpriteFont.h>
 #include <SkeletonEngine/AudioEngine.h>
+#include <SkeletonEngine/ParticleEngine2D.h>
+#include <SkeletonEngine/ParticleBatch2D.h>
 
 #include "Player.h"
 #include "Level.h"
@@ -34,14 +36,20 @@ private:
 	void updateBullets(float delta_time);
 	void checkVictory();
 
+	void addBlood(const glm::vec2& position, int num_particles);		// adds blood to particle engine
+
 	SkeletonEngine::Window window_;
 	SkeletonEngine::GLSLProgram texture_program_;
 	SkeletonEngine::InputManager input_manager_;
 	SkeletonEngine::Camera2D camera_;
+
 	SkeletonEngine::SpriteBatch sprite_batch_; ///< for drawing all agents
 	SkeletonEngine::SpriteBatch hud_sprite_batch_;
 	SkeletonEngine::SpriteFont* sprite_font_;
+
 	SkeletonEngine::AudioEngine audio_engine_;
+	SkeletonEngine::ParticleEngine2D particle_engine_;
+	SkeletonEngine::ParticleBatch2D* blood_particle_batch_;
 
 	int height_;
 	int width_;

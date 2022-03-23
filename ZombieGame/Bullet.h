@@ -26,6 +26,8 @@ public:
 
 	float getDamage() const { return damage_; }
 
+	glm::vec2 getPosition() const { return position_; }
+
 private:
 	bool collideWithWorld(const std::vector<std::string>& level_data);
 
