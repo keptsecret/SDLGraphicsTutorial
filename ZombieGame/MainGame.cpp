@@ -69,7 +69,13 @@ void MainGame::initSystems()
 	camera_.init(width_, height_);
 
 	blood_particle_batch_ = new SkeletonEngine::ParticleBatch2D();
-	blood_particle_batch_->init(1000, 0.05f, SkeletonEngine::ResourceManager::getTexture("Textures/particle.png"));
+	blood_particle_batch_->init(1000, 0.05f,
+		SkeletonEngine::ResourceManager::getTexture("Textures/particle.png"), 
+		[](SkeletonEngine::Particle2D& p, float delta_time)
+		{
+			p.position += p.velocity * delta_time;
+			p.color.a = static_cast<GLubyte>(p.life * 255.0f);
+		});
 	particle_engine_.addParticleBatch(blood_particle_batch_);
 }
 

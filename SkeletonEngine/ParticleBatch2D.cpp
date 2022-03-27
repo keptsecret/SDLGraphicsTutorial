@@ -2,11 +2,6 @@
 
 namespace SkeletonEngine
 {
-	void Particle2D::update(float delta_time)
-	{
-		position_ += velocity_ * delta_time;
-	}
-
 	ParticleBatch2D::ParticleBatch2D()
 	{
 	}
@@ -16,22 +11,23 @@ namespace SkeletonEngine
 		delete[] particles_;
 	}
 
-	void ParticleBatch2D::init(int max_particles, float decay_rate, GLTexture texture)
+	void ParticleBatch2D::init(int max_particles, float decay_rate, GLTexture texture, std::function<void(Particle2D&, float)> update_func)
 	{
 		max_particles_ = max_particles;
 		particles_ = new Particle2D[max_particles_];
 		decay_rate_ = decay_rate;
 		texture_ = texture;
+		update_func_ = update_func;
 	}
 
 	void ParticleBatch2D::update(float delta_time)
 	{
 		for (size_t i = 0; i < max_particles_; i++)
 		{
-			if (particles_[i].life_ > 0.0f)
+			if (particles_[i].life > 0.0f)
 			{
-				particles_[i].update(delta_time);
-				particles_[i].life_ -= decay_rate_ * delta_time;
+				update_func_(particles_[i], delta_time);
+				particles_[i].life -= decay_rate_ * delta_time;
 			}
 		}
 	}
@@ -42,10 +38,10 @@ namespace SkeletonEngine
 		for (size_t i = 0; i < max_particles_; i++)
 		{
 			auto& p = particles_[i];
-			if (p.life_ > 0.0f)
+			if (p.life > 0.0f)
 			{
-				glm::vec4 dest_rect(p.position_.x, p.position_.y, p.width_, p.width_);
-				sprite_batch->draw(dest_rect, uv_rect, texture_.id, 0.0f, p.color_);
+				glm::vec4 dest_rect(p.position.x, p.position.y, p.width, p.width);
+				sprite_batch->draw(dest_rect, uv_rect, texture_.id, 0.0f, p.color);
 			}
 		}
 	}
@@ -55,18 +51,18 @@ namespace SkeletonEngine
 		int particle_idx = findFreeParticle();
 		auto& p = particles_[particle_idx];
 
-		p.life_ = 1.0f;
-		p.position_ = pos;
-		p.velocity_ = vel;
-		p.color_ = color;
-		p.width_ = width;
+		p.life = 1.0f;
+		p.position = pos;
+		p.velocity = vel;
+		p.color = color;
+		p.width = width;
 	}
 
 	int ParticleBatch2D::findFreeParticle()
 	{
 		for (int i = last_free_particle_; i < max_particles_; i++)
 		{
-			if (particles_[i].life_ <= 0.0f)
+			if (particles_[i].life <= 0.0f)
 			{
 				last_free_particle_ = i;
 				return i;
@@ -75,7 +71,7 @@ namespace SkeletonEngine
 
 		for (int i = 0; i < last_free_particle_; i++)
 		{
-			if (particles_[i].life_ <= 0.0f)
+			if (particles_[i].life <= 0.0f)
 			{
 				last_free_particle_ = i;
 				return i;

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <glm/glm.hpp>
 
 #include "GLTexture.h"
@@ -11,18 +12,18 @@ namespace SkeletonEngine
 	class Particle2D
 	{
 	public:
-		friend class ParticleBatch2D;
-
-		void update(float delta_time);
-
-	private:
-		glm::vec2 position_ = glm::vec2(0.0f);
-		glm::vec2 velocity_ = glm::vec2(0.0f);
-		ColorRGBA8 color_;
-		float life_ = 1.0f;
-		bool is_active_ = false;
-		float width_ = 0.0f;
+		glm::vec2 position = glm::vec2(0.0f);
+		glm::vec2 velocity = glm::vec2(0.0f);
+		ColorRGBA8 color;
+		float life = 1.0f;
+		bool is_active = false;
+		float width = 0.0f;
 	};
+
+	inline void defaultParticleUpdate(Particle2D& particle, float delta_time)
+	{
+		particle.position += particle.velocity * delta_time;
+	}
 
 	class ParticleBatch2D
 	{
@@ -30,7 +31,7 @@ namespace SkeletonEngine
 		ParticleBatch2D();
 		~ParticleBatch2D();
 
-		void init(int max_particles, float decay_rate, GLTexture texture);
+		void init(int max_particles, float decay_rate, GLTexture texture, std::function<void(Particle2D&, float)> update_func = defaultParticleUpdate);
 		void update(float delta_time);
 		void draw(SpriteBatch* sprite_batch);
 
@@ -39,6 +40,7 @@ namespace SkeletonEngine
 	private:
 		int findFreeParticle();
 
+		std::function<void(Particle2D&, float)> update_func_;
 		float decay_rate_ = 0.1f;
 		Particle2D* particles_ = nullptr;
 		int max_particles_ = 0;
